@@ -1,8 +1,8 @@
-# 🏢 RWA Investment Platform
+# 🌾 AgroToken Farm Investment Platform
 
-A professional Real World Asset (RWA) tokenization and investment platform built on the Stellar blockchain. This platform enables investors to discover, invest in, and trade tokenized real world assets including real estate, commodities, and infrastructure projects.
+A comprehensive agricultural asset tokenization and investment platform built on the Stellar blockchain. This platform enables farmers to tokenize their agricultural assets and allows investors to participate in sustainable farming through blockchain technology.
 
-![RWA Platform](https://img.shields.io/badge/Platform-RWA_Investment-blue)
+![AgroToken Platform](https://img.shields.io/badge/Platform-AgroToken_Farm_Investment-green)
 ![Blockchain](https://img.shields.io/badge/Blockchain-Stellar-brightgreen)
 ![Framework](https://img.shields.io/badge/Framework-Next.js_15-black)
 ![TypeScript](https://img.shields.io/badge/Language-TypeScript-blue)
@@ -10,28 +10,34 @@ A professional Real World Asset (RWA) tokenization and investment platform built
 
 ## 🎯 **Project Overview**
 
-The RWA Investment Platform democratizes access to traditionally illiquid real world assets by tokenizing them on the Stellar blockchain. Investors can purchase fractional ownership of high-value assets like premium real estate, precious metals storage facilities, and renewable energy infrastructure.
+The AgroToken Farm Investment Platform democratizes access to agricultural investments by tokenizing farm assets on the Stellar blockchain. Farmers can access funding without selling their land, while investors can purchase fractional ownership of agricultural assets like organic farms, dairy operations, livestock ranches, and food processing facilities.
 
 ### **🌟 Key Features**
 
+#### **For Farmers**
+- 🚜 **Farm Tokenization** - Transform agricultural assets into tradeable farm shares
+- 💰 **Access to Capital** - Raise funding while retaining farm ownership
+- 📋 **Compliance Management** - Organic certification and agricultural compliance tools
+- 🌱 **Sustainable Focus** - Support for organic and sustainable farming practices
+
 #### **For Investors**
-- 💼 **Professional Dashboard** - Portfolio overview with real-time asset valuations
-- 🏪 **Asset Marketplace** - Discover and filter tokenized investment opportunities
-- 💸 **Secure Transfers** - Send/receive RWA tokens with compliance validation
-- 📊 **Performance Tracking** - Monitor yields, compliance status, and asset performance
+- 💼 **Farm Portfolio Dashboard** - Overview of agricultural investments with real-time valuations
+- 🏪 **Agricultural Marketplace** - Discover and filter farm investment opportunities  
+- 💸 **Secure Share Transfers** - Send/receive farm shares with compliance validation
+- 📊 **Performance Tracking** - Monitor yields, organic certification status, and harvest projections
 - 🔐 **Wallet Integration** - Seamless Freighter wallet connectivity
 
-#### **For Asset Owners**
-- 🏭 **Tokenization Wizard** - 5-step process to tokenize physical assets
-- 📋 **Compliance Management** - KYC/AML and regulatory compliance tools
+#### **For Asset Owners (Farmers)**
+- 🌱 **Farm Listing Wizard** - 5-step process to tokenize agricultural assets
+- 📋 **Agricultural Compliance** - Organic certification and regulatory compliance tools
 - 📈 **Funding Management** - Set investment goals and track capital raising
-- 🔒 **Legal Framework** - Document verification and legal compliance
+- 🔒 **Legal Framework** - Land ownership verification and legal compliance
 
 #### **Platform Features**
-- 🌐 **Multi-Asset Support** - Real estate, commodities, infrastructure
+- 🌾 **Multi-Farm Support** - Cropland, livestock, dairy farms, food processing
 - ⚡ **Stellar Integration** - Fast, low-cost blockchain transactions
-- 🛡️ **Regulatory Compliance** - Built-in KYC/whitelist validation
-- 📱 **Responsive Design** - Professional UI optimized for all devices
+- 🛡️ **Organic Compliance** - Built-in organic certification and investor validation
+- 📱 **Responsive Design** - Professional UI optimized for agricultural investments
 
 ---
 

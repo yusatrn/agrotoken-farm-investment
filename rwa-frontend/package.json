@@ -1,6 +1,7 @@
 {
-  "name": "rwa-frontend",
-  "version": "0.1.0",
+  "name": "agrotoken-farm-investment",
+  "version": "1.0.0",
+  "description": "Agricultural asset tokenization and investment platform built on Stellar blockchain",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",

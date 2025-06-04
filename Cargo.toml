@@ -1,9 +1,9 @@
 [package]
-name = "rwa-temp"
-version = "0.1.0"
+name = "agrotoken-farm-investment"
+version = "1.0.0"
 edition = "2021"
 license = "MIT"
-description = "Real World Asset contract for Stellar Soroban"
+description = "Agricultural asset tokenization platform smart contract for Stellar Soroban"
 
 [lib]
 crate-type = ["cdylib"]
