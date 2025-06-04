@@ -52,8 +52,8 @@ The AgroToken Farm Investment Platform democratizes access to agricultural inves
 
 ```bash
 # Clone the repository
-git clone <repository-url>
-cd rwa-investment-platform
+git clone https://github.com/[YOUR_USERNAME]/agrotoken-farm-investment.git
+cd agrotoken-farm-investment
 
 # Navigate to frontend directory
 cd rwa-frontend
@@ -65,7 +65,7 @@ npm install
 npm run dev
 ```
 
-Visit `http://localhost:3000` to access the platform.
+Visit `http://localhost:3000` to access the AgroToken platform.
 
 ### **Production Build**
 
@@ -158,29 +158,29 @@ interface AssetMetadata {
 
 ## 🎨 **User Interface Guide**
 
-### **🏠 Dashboard Page (`/`)**
-- Portfolio value and performance metrics
-- Compliance status indicators
-- Quick action buttons
-- Investment opportunities overview
+### **🌾 Farm Dashboard Page (`/`)**
+- Farm portfolio value and performance metrics
+- Organic certification status indicators
+- Quick action buttons for farm operations
+- Agricultural investment opportunities overview
 
-### **🏪 Marketplace Page (`/marketplace`)**
-- Asset discovery with search and filtering
-- Investment statistics and analytics
-- Asset cards with key metrics
-- Direct investment flow
+### **🚜 Agricultural Marketplace Page (`/marketplace`)**
+- Farm asset discovery with search and filtering
+- Agricultural investment statistics and analytics
+- Farm asset cards with key metrics and harvest projections
+- Direct farm investment flow
 
-### **🏭 Tokenization Page (`/tokenize`)**
-- 5-step asset tokenization wizard
-- Document upload and verification
-- Token economics configuration
-- Compliance settings and deployment
+### **🌱 List Your Farm Page (`/tokenize`)**
+- 5-step farm tokenization wizard
+- Agricultural document upload and verification
+- Farm share economics configuration
+- Organic compliance settings and deployment
 
-### **💸 Transfer Page (`/transfer`)**
-- Secure token transfer interface
-- Address validation and compliance checking
+### **🚀 Farm Share Transfer Page (`/transfer`)**
+- Secure farm share transfer interface
+- Address validation and agricultural compliance checking
 - Transaction preview and confirmation
-- Real-time balance updates
+- Real-time farm portfolio balance updates
 
 ---
 
@@ -415,10 +415,36 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ---
 
+## 🌱 **Vision & Impact**
+
+AgroToken Farm Investment Platform bridges the gap between traditional agriculture and modern blockchain technology, enabling:
+
+- **For Farmers**: Access to global capital while retaining farm ownership
+- **For Investors**: Direct participation in sustainable agriculture with transparent returns
+- **For the Industry**: Traceable supply chain and sustainable farming incentives
+
+---
+
 <div align="center">
 
-**Built with ❤️ for the future of tokenized real world assets**
+**🌾 Built with ❤️ for the future of sustainable agriculture 🌾**
 
-[Website](link) • [Documentation](link) • [Discord](link) • [Twitter](link)
+*"From farm to blockchain - Growing sustainable investments for tomorrow's agriculture"*
 
-</div> 
+**[Live Demo](link) • [Documentation](link) • [Community](link) • [Contact](link)**
+
+</div>
+
+---
+
+### 📄 **License**
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+### 🤝 **Contributing**
+
+Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
+
+### ⭐ **Support**
+
+If you find this project helpful, please give it a star ⭐ on GitHub!
