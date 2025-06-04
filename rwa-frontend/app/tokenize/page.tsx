@@ -32,56 +32,63 @@ import { Progress } from '@/components/ui/progress';
 
 const ASSET_TYPES = [
   {
-    id: 'real_estate',
-    name: 'Real Estate',
-    description: 'Residential, commercial, or industrial properties',
+    id: 'cropland',
+    name: 'Cropland',
+    description: 'Agricultural land for growing crops',
     icon: Building2,
-    minValue: 100000,
-    examples: ['Apartment buildings', 'Office complexes', 'Warehouses', 'Retail spaces']
-  },
-  {
-    id: 'commodities',
-    name: 'Commodities',
-    description: 'Physical goods and precious metals',
-    icon: Coins,
     minValue: 50000,
-    examples: ['Gold storage', 'Oil reserves', 'Agricultural products', 'Rare metals']
+    examples: ['Corn farms', 'Soybean fields', 'Wheat cultivation', 'Organic farming']
   },
   {
-    id: 'infrastructure',
-    name: 'Infrastructure',
-    description: 'Energy, transportation, and utility projects',
+    id: 'livestock',
+    name: 'Livestock',
+    description: 'Animal farming operations',
+    icon: Coins,
+    minValue: 30000,
+    examples: ['Dairy farms', 'Cattle ranches', 'Poultry operations', 'Sheep farming']
+  },  {
+    id: 'dairy_farm',
+    name: 'Dairy Farm',
+    description: 'Specialized dairy cattle operations',
     icon: Briefcase,
-    minValue: 500000,
-    examples: ['Solar farms', 'Wind turbines', 'Data centers', 'Transportation hubs']
+    minValue: 80000,
+    examples: ['Holstein dairy', 'Organic milk production', 'Cheese making', 'Yogurt facilities']
+  },
+  {
+    id: 'food_processing',
+    name: 'Food Processing',
+    description: 'Food production and processing facilities',
+    icon: Briefcase,
+    minValue: 100000,
+    examples: ['Grain mills', 'Meat processing', 'Vegetable packaging', 'Organic certification']
   }
 ];
 
 const TOKENIZATION_STEPS = [
   {
     id: 1,
-    title: 'Asset Details',
-    description: 'Provide basic information about your asset'
+    title: 'Farm Information',
+    description: 'Farm type, crop details, location, size'
   },
   {
     id: 2,
-    title: 'Legal Documentation',
-    description: 'Upload required legal and ownership documents'
+    title: 'Agricultural Details',
+    description: 'Soil quality, irrigation system, equipment, livestock count'
   },
   {
     id: 3,
-    title: 'Tokenization Structure',
-    description: 'Define token economics and distribution'
+    title: 'Certifications & Documentation',
+    description: 'Land ownership, organic certificates, permits, insurance'
   },
   {
     id: 4,
-    title: 'Compliance Setup',
-    description: 'Configure investor requirements and restrictions'
+    title: 'Investment Structure',
+    description: 'Funding goals, token pricing, revenue sharing, harvest projections'
   },
   {
     id: 5,
-    title: 'Review & Deploy',
-    description: 'Review all details and deploy your token'
+    title: 'Launch Farm Project',
+    description: 'Review, approval, marketplace listing, investor outreach'
   }
 ];
 
@@ -180,32 +187,29 @@ export default function TokenizePage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <Label htmlFor="assetName">Asset Name</Label>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">              <div>
+                <Label htmlFor="assetName">Farm Name</Label>
                 <Input
                   id="assetName"
-                  placeholder="e.g., Luxury Apartment NYC"
+                  placeholder="e.g., Green Valley Organic Farm"
                   value={formData.assetName}
                   onChange={(e) => updateFormData('assetName', e.target.value)}
                 />
               </div>
               <div>
-                <Label htmlFor="location">Location</Label>
+                <Label htmlFor="location">Farm Location</Label>
                 <Input
                   id="location"
-                  placeholder="e.g., Manhattan, New York"
+                  placeholder="e.g., Iowa County, Iowa"
                   value={formData.location}
                   onChange={(e) => updateFormData('location', e.target.value)}
                 />
               </div>
-            </div>
-
-            <div>
-              <Label htmlFor="description">Asset Description</Label>
+            </div>            <div>
+              <Label htmlFor="description">Farm Description</Label>
               <Textarea
                 id="description"
-                placeholder="Detailed description of your asset, its features, and investment potential..."
+                placeholder="Detailed description of your farm, its crops/livestock, facilities, and investment potential..."
                 value={formData.description}
                 onChange={(e) => updateFormData('description', e.target.value)}
                 className="min-h-24"
@@ -213,40 +217,37 @@ export default function TokenizePage() {
             </div>
 
             <div>
-              <Label htmlFor="totalValue">Total Asset Value (USD)</Label>
+              <Label htmlFor="totalValue">Total Farm Value (USD)</Label>
               <Input
                 id="totalValue"
                 type="number"
-                placeholder="2500000"
+                placeholder="500000"
                 value={formData.totalValue}
                 onChange={(e) => updateFormData('totalValue', e.target.value)}
               />
               <p className="text-sm text-muted-foreground mt-1">
-                Based on professional appraisal or market valuation
+                Based on land appraisal, equipment value, and agricultural potential
               </p>
             </div>
           </div>
-        );
-
-      case 2:
+        );      case 2:
         return (
           <div className="space-y-6">
             <Alert>
               <Info className="h-4 w-4" />
               <AlertDescription>
-                All documents must be notarized and verified by our legal team before tokenization approval.
+                All agricultural documents must be notarized and verified by our agricultural compliance team before farm tokenization approval.
               </AlertDescription>
             </Alert>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
+              <Card>                <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <FileText className="h-5 w-5" />
-                    Ownership Proof
+                    Land Ownership Proof
                   </CardTitle>
                   <CardDescription>
-                    Property deed, title, or ownership certificate
+                    Farm deed, title, or ownership certificate
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -260,20 +261,19 @@ export default function TokenizePage() {
                 </CardContent>
               </Card>
 
-              <Card>
-                <CardHeader>
+              <Card>                <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Calculator className="h-5 w-5" />
-                    Professional Valuation
+                    Farm Valuation
                   </CardTitle>
                   <CardDescription>
-                    Official appraisal from certified assessor
+                    Official farm appraisal from certified agricultural assessor
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-6 text-center">
                     <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
-                    <p className="text-sm text-muted-foreground mb-2">Upload appraisal report</p>
+                    <p className="text-sm text-muted-foreground mb-2">Upload farm appraisal report</p>
                     <Button variant="outline" size="sm">
                       Choose File
                     </Button>
@@ -330,18 +330,17 @@ export default function TokenizePage() {
         const tokenomics = calculateTokenomics();
         return (
           <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <Label htmlFor="tokenSymbol">Token Symbol</Label>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">              <div>
+                <Label htmlFor="tokenSymbol">Farm Share Symbol</Label>
                 <Input
                   id="tokenSymbol"
-                  placeholder="e.g., LAPT"
+                  placeholder="e.g., GVOF (Green Valley Organic Farm)"
                   value={formData.tokenSymbol}
                   onChange={(e) => updateFormData('tokenSymbol', e.target.value.toUpperCase())}
                   maxLength={5}
                 />
                 <p className="text-sm text-muted-foreground mt-1">
-                  3-5 character unique identifier
+                  3-5 character unique identifier for your farm shares
                 </p>
               </div>
               <div>
@@ -481,18 +480,16 @@ export default function TokenizePage() {
 
       case 5:
         return (
-          <div className="space-y-6">
-            <Alert>
+          <div className="space-y-6">            <Alert>
               <Check className="h-4 w-4" />
               <AlertDescription>
-                Review all information carefully. Once deployed, some settings cannot be changed.
+                Review all farm information carefully. Once deployed, some settings cannot be changed.
               </AlertDescription>
             </Alert>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Card>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">              <Card>
                 <CardHeader>
-                  <CardTitle>Asset Information</CardTitle>
+                  <CardTitle>Farm Information</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2">
                   <div className="flex justify-between">
@@ -516,19 +513,18 @@ export default function TokenizePage() {
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Token Details</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-2">
+                  <CardTitle>Farm Share Details</CardTitle>
+                </CardHeader>                <CardContent className="space-y-2">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Symbol:</span>
                     <span className="font-medium">{formData.tokenSymbol}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Total Supply:</span>
+                    <span className="text-muted-foreground">Total Shares:</span>
                     <span className="font-medium">{parseFloat(formData.totalSupply).toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Price per Token:</span>
+                    <span className="text-muted-foreground">Price per Share:</span>
                     <span className="font-medium">${calculateTokenomics()?.pricePerToken}</span>
                   </div>
                   <div className="flex justify-between">
@@ -580,12 +576,11 @@ export default function TokenizePage() {
     <div className="min-h-screen bg-background">
       <Header />
       <main className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto space-y-8">
-          {/* Header */}
+        <div className="max-w-4xl mx-auto space-y-8">          {/* Header */}
           <div className="text-center space-y-4">
-            <h1 className="text-4xl font-bold">Asset Tokenization</h1>
+            <h1 className="text-4xl font-bold">🌾 List Your Farm</h1>
             <p className="text-xl text-muted-foreground">
-              Transform your real world asset into tradeable tokens
+              Transform your agricultural assets into tradeable farm shares
             </p>
           </div>
 
@@ -642,10 +637,9 @@ export default function TokenizePage() {
               <Button onClick={nextStep}>
                 Next
                 <ArrowRight className="h-4 w-4 ml-2" />
-              </Button>
-            ) : (
+              </Button>            ) : (
               <Button className="bg-green-600 hover:bg-green-700">
-                Deploy Token
+                Launch Farm Project
                 <Coins className="h-4 w-4 ml-2" />
               </Button>
             )}

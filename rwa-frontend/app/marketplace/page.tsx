@@ -29,70 +29,93 @@ import Link from 'next/link';
 const marketplaceAssets = [
   {
     id: '1',
-    name: 'Luxury Apartment NYC',
-    location: 'Manhattan, New York',
-    type: 'real_estate',
-    description: 'Premium apartment in Manhattan with high rental yield',
-    totalValue: '2500000',
-    availableTokens: '1000000',
-    pricePerToken: '2.50',
-    projectedYield: '8.5',
-    riskLevel: 'low' as const,
+    name: 'Green Valley Organic Farm',
+    location: 'Iowa, USA',
+    type: 'cropland',
+    description: '500 acres organic corn and soybean farm with certified organic status',
+    totalValue: '250000',
+    availableTokens: '10000',
+    pricePerToken: '25.00',
+    projectedYield: '15.2',
+    riskLevel: 'medium' as const,
     status: 'live' as const,
     images: ['/api/placeholder/400/300'],
     launchDate: Date.now() - 86400000,
-    investors: 45,
+    investors: 12,
+    farmDetails: {
+      acres: 500,
+      cropType: 'Corn & Soybeans',
+      organic: true,
+      harvestSeason: '2025-10-01'
+    },
     contractId: 'CBQAAC4EHNMMHEI2W3QU6UQ5N4KSVYRLVTB5M2XMARCNS4CNLWMX3VQ6'
-  },
-  {
+  },  {
     id: '2',
-    name: 'Downtown Office Building',
-    location: 'Chicago, Illinois',
-    type: 'real_estate',
-    description: 'Class A commercial office space in downtown Chicago',
-    totalValue: '5000000',
-    availableTokens: '2000000',
-    pricePerToken: '2.50',
-    projectedYield: '9.2',
+    name: 'Sunrise Dairy Farm',
+    location: 'Wisconsin, USA',
+    type: 'livestock',
+    description: 'Premium dairy operation with 200 Holstein cows and modern milking facilities',
+    totalValue: '180000',
+    availableTokens: '7200',
+    pricePerToken: '25.00',
+    projectedYield: '11.8',
     riskLevel: 'medium' as const,
     status: 'upcoming' as const,
     images: ['/api/placeholder/400/300'],
     launchDate: Date.now() + 2592000000, // 30 days from now
     investors: 0,
+    farmDetails: {
+      acres: 120,
+      cropType: 'Dairy Operations',
+      organic: false,
+      harvestSeason: 'Year-round'
+    },
     contractId: null
   },
   {
     id: '3',
-    name: 'Gold Storage Facility',
-    location: 'Delaware, USA',
-    type: 'commodities',
-    description: 'Secure precious metals storage and trading facility',
-    totalValue: '3000000',
-    availableTokens: '1500000',
-    pricePerToken: '2.00',
-    projectedYield: '6.8',
+    name: 'Organic Vegetable Processing',
+    location: 'California, USA',
+    type: 'food_processing',
+    description: 'Certified organic vegetable processing and packaging facility',
+    totalValue: '300000',
+    availableTokens: '12000',
+    pricePerToken: '25.00',
+    projectedYield: '9.8',
     riskLevel: 'low' as const,
     status: 'upcoming' as const,
     images: ['/api/placeholder/400/300'],
     launchDate: Date.now() + 5184000000, // 60 days from now
     investors: 0,
+    farmDetails: {
+      acres: 0,
+      cropType: 'Processing Facility',
+      organic: true,
+      harvestSeason: 'Year-round'
+    },
     contractId: null
   },
   {
     id: '4',
-    name: 'Renewable Energy Farm',
-    location: 'Texas, USA',
-    type: 'infrastructure',
-    description: 'Solar energy farm with long-term government contracts',
-    totalValue: '8000000',
-    availableTokens: '4000000',
-    pricePerToken: '2.00',
-    projectedYield: '7.5',
+    name: 'Sustainable Poultry Farm',
+    location: 'Georgia, USA',
+    type: 'livestock',
+    description: 'Free-range chicken farm with organic feed and sustainable practices',
+    totalValue: '220000',
+    availableTokens: '8800',
+    pricePerToken: '25.00',
+    projectedYield: '13.5',
     riskLevel: 'medium' as const,
     status: 'upcoming' as const,
     images: ['/api/placeholder/400/300'],
     launchDate: Date.now() + 7776000000, // 90 days from now
     investors: 0,
+    farmDetails: {
+      acres: 80,
+      cropType: 'Free-range Poultry',
+      organic: true,
+      harvestSeason: 'Year-round'
+    },
     contractId: null
   }
 ];
@@ -102,19 +125,19 @@ export default function MarketplacePage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedType, setSelectedType] = useState<string>('all');
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
-
   const assetTypes = [
-    { value: 'all', label: 'All Assets' },
-    { value: 'real_estate', label: 'Real Estate' },
-    { value: 'commodities', label: 'Commodities' },
-    { value: 'infrastructure', label: 'Infrastructure' }
+    { value: 'all', label: 'All Farm Types' },
+    { value: 'cropland', label: 'Cropland' },
+    { value: 'livestock', label: 'Livestock' },
+    { value: 'dairy_farm', label: 'Dairy Farm' },
+    { value: 'food_processing', label: 'Food Processing' }
   ];
 
   const statusTypes = [
     { value: 'all', label: 'All Status' },
-    { value: 'live', label: 'Live' },
-    { value: 'upcoming', label: 'Upcoming' },
-    { value: 'sold_out', label: 'Sold Out' }
+    { value: 'live', label: 'Available' },
+    { value: 'upcoming', label: 'Coming Soon' },
+    { value: 'sold_out', label: 'Fully Funded' }
   ];
 
   const filteredAssets = marketplaceAssets.filter(asset => {
@@ -156,12 +179,11 @@ export default function MarketplacePage() {
     <div className="min-h-screen bg-background">
       <Header />
       <main className="container mx-auto px-4 py-8">
-        <div className="space-y-8">
-          {/* Page Header */}
+        <div className="space-y-8">          {/* Page Header */}
           <div className="space-y-4">
-            <h1 className="text-4xl font-bold">Asset Marketplace</h1>
+            <h1 className="text-4xl font-bold">🌾 Agricultural Marketplace</h1>
             <p className="text-xl text-muted-foreground">
-              Discover tokenized real world assets and start investing today
+              Discover sustainable farm investment opportunities and support agriculture
             </p>
           </div>
 
@@ -169,18 +191,16 @@ export default function MarketplacePage() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Assets</CardTitle>
-                <Building2 className="h-4 w-4 text-muted-foreground" />
+                <CardTitle className="text-sm font-medium">Active Farms</CardTitle>
+                <div className="text-xl">🚜</div>
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{marketplaceAssets.length}</div>
-                <p className="text-xs text-muted-foreground">Across multiple sectors</p>
+                <p className="text-xs text-muted-foreground">Across agricultural sectors</p>
               </CardContent>
-            </Card>
-
-            <Card>
+            </Card>            <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Value</CardTitle>
+                <CardTitle className="text-sm font-medium">Total Agricultural Assets Value</CardTitle>
                 <DollarSign className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
@@ -195,18 +215,18 @@ export default function MarketplacePage() {
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Avg. Yield</CardTitle>
+                <CardTitle className="text-sm font-medium">Avg. Farm Yield</CardTitle>
                 <TrendingUp className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">8.0%</div>
+                <div className="text-2xl font-bold">12.5%</div>
                 <p className="text-xs text-muted-foreground">Annual projected return</p>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Active Investors</CardTitle>
+                <CardTitle className="text-sm font-medium">Active Farm Investors</CardTitle>
                 <Users className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
@@ -216,14 +236,12 @@ export default function MarketplacePage() {
                 <p className="text-xs text-muted-foreground">Verified participants</p>
               </CardContent>
             </Card>
-          </div>
-
-          {/* Filters */}
+          </div>          {/* Filters */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Filter className="h-5 w-5" />
-                Filter Assets
+                🔍 Filter Farm Assets
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -372,12 +390,11 @@ export default function MarketplacePage() {
             </Card>
           )}
 
-          {/* Call to Action */}
-          <Card className="bg-primary text-primary-foreground">
+          {/* Call to Action */}          <Card className="bg-primary text-primary-foreground">
             <CardContent className="p-8 text-center">
-              <h2 className="text-2xl font-bold mb-4">Ready to Start Investing?</h2>
+              <h2 className="text-2xl font-bold mb-4">Ready to Start Farm Investing?</h2>
               <p className="text-lg opacity-90 mb-6">
-                Join hundreds of investors building wealth through tokenized real world assets
+                Join hundreds of investors building wealth through sustainable agriculture investments
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 {!isConnected ? (
@@ -386,17 +403,15 @@ export default function MarketplacePage() {
                     Connect Wallet to Start
                   </Button>
                 ) : (
-                  <>
-                    <Button size="lg" variant="secondary" asChild>
+                  <>                    <Button size="lg" variant="secondary" asChild>
                       <Link href="/transfer">
                         <Coins className="h-5 w-5 mr-2" />
-                        Start Investing
+                        Start Farm Investing
                       </Link>
-                    </Button>
-                    <Button size="lg" variant="secondary" asChild>
+                    </Button><Button size="lg" variant="secondary" asChild>
                       <Link href="/tokenize">
                         <Building2 className="h-5 w-5 mr-2" />
-                        Tokenize Asset
+                        List Your Farm
                       </Link>
                     </Button>
                   </>

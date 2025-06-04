@@ -44,7 +44,6 @@ export default function Dashboard() {
       fetchUserData(address);
     }
   }, [isConnected, address, fetchUserData]);
-
   if (!isConnected) {
     return (
       <div className="min-h-screen bg-background">
@@ -53,23 +52,23 @@ export default function Dashboard() {
           <div className="flex flex-col items-center justify-center min-h-[calc(100vh-120px)] space-y-8">
             <div className="text-center space-y-4 max-w-2xl">
               <h1 className="text-4xl font-bold tracking-tight">
-                Real World Asset Investment Platform
+                🌾 AgroToken Farm Investment Platform
               </h1>
               <p className="text-xl text-muted-foreground">
-                Access tokenized real estate, commodities, and other physical assets 
-                through compliant blockchain technology on Stellar.
+                Sustainable agriculture investment platform powered by blockchain technology. 
+                Support farmers and earn returns from agricultural assets.
               </p>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-3xl">
               <Card className="text-center">
                 <CardHeader>
-                  <Building2 className="h-12 w-12 mx-auto text-primary" />
-                  <CardTitle className="text-lg">Tokenized Assets</CardTitle>
+                  <div className="text-4xl mb-2">🚜</div>
+                  <CardTitle className="text-lg">Farm Assets</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-muted-foreground">
-                    Invest in premium real estate and other assets through blockchain tokens
+                    Invest in agricultural lands, livestock farms, and food production facilities
                   </p>
                 </CardContent>
               </Card>
@@ -77,11 +76,11 @@ export default function Dashboard() {
               <Card className="text-center">
                 <CardHeader>
                   <CheckCircle className="h-12 w-12 mx-auto text-green-600" />
-                  <CardTitle className="text-lg">Compliant</CardTitle>
+                  <CardTitle className="text-lg">Sustainable</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-muted-foreground">
-                    KYC verification and regulatory compliance built into every transaction
+                    Support organic farming and sustainable agriculture practices
                   </p>
                 </CardContent>
               </Card>
@@ -89,11 +88,11 @@ export default function Dashboard() {
               <Card className="text-center">
                 <CardHeader>
                   <TrendingUp className="h-12 w-12 mx-auto text-blue-600" />
-                  <CardTitle className="text-lg">High Yield</CardTitle>
+                  <CardTitle className="text-lg">Farm Returns</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-muted-foreground">
-                    Earn passive income through rental yields and asset appreciation
+                    Earn passive income through harvest yields and farm appreciation
                   </p>
                 </CardContent>
               </Card>
@@ -108,12 +107,11 @@ export default function Dashboard() {
     <div className="min-h-screen bg-background">
       <Header />
       <main className="container mx-auto px-4 py-8">
-        <div className="space-y-8">
-          {/* Welcome Section */}
+        <div className="space-y-8">          {/* Welcome Section */}
           <div className="space-y-4">
-            <h1 className="text-3xl font-bold">Welcome to RWA Investor</h1>
+            <h1 className="text-3xl font-bold">🌾 Welcome to AgroToken Farm Investment</h1>
             <p className="text-lg text-muted-foreground">
-              Your gateway to tokenized real world assets
+              Your gateway to sustainable agriculture investments
             </p>
           </div>
 
@@ -121,8 +119,8 @@ export default function Dashboard() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Your Holdings</CardTitle>
-                <Building2 className="h-4 w-4 text-muted-foreground" />
+                <CardTitle className="text-sm font-medium">Farm Portfolio Value</CardTitle>
+                <div className="text-xl">🚜</div>
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">
@@ -138,7 +136,7 @@ export default function Dashboard() {
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Compliance Status</CardTitle>
+                <CardTitle className="text-sm font-medium">Organic Certification Status</CardTitle>
                 {isWhitelisted ? (
                   <CheckCircle className="h-4 w-4 text-green-600" />
                 ) : (
@@ -153,30 +151,28 @@ export default function Dashboard() {
                   {compliance?.kyc_verified ? 'KYC Complete' : 'KYC Required'}
                 </p>
               </CardContent>
-            </Card>
-
-            <Card>
+            </Card>            <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Est. Annual Yield</CardTitle>
                 <TrendingUp className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">8.5%</div>
+                <div className="text-2xl font-bold">12.5%</div>
                 <p className="text-xs text-muted-foreground">
-                  Rental income + appreciation
+                  Harvest returns + appreciation
                 </p>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Next Distribution</CardTitle>
+                <CardTitle className="text-sm font-medium">Next Harvest</CardTitle>
                 <Clock className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">15 days</div>
+                <div className="text-2xl font-bold">45 days</div>
                 <p className="text-xs text-muted-foreground">
-                  Monthly rental payment
+                  Corn & soybean season
                 </p>
               </CardContent>
             </Card>
@@ -217,61 +213,58 @@ export default function Dashboard() {
                     <p className="text-2xl font-bold font-mono">{assetMetadata.symbol}</p>
                   </div>
                 </div>
-                
-                <div className="flex gap-3">
+                  <div className="flex gap-3">
                   <Button asChild>
                     <Link href="/transfer">
-                      Transfer Tokens
+                      🚀 Share Transfer
                       <ArrowRight className="h-4 w-4 ml-2" />
                     </Link>
                   </Button>
                   <Button variant="outline" asChild>
                     <Link href="/marketplace">
-                      View More Assets
+                      🔍 Explore Farms
                     </Link>
                   </Button>
                 </div>
               </CardContent>
             </Card>
-          )}
-
-          {/* Quick Actions */}
+          )}          {/* Quick Actions */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Card>
               <CardHeader>
-                <CardTitle>Investment Opportunities</CardTitle>
+                <CardTitle>🌾 Farm Investment Opportunities</CardTitle>
                 <CardDescription>
-                  Discover new tokenized assets to diversify your portfolio
+                  Discover new agricultural assets to diversify your portfolio
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-3">
                   <div className="flex items-center justify-between p-3 border rounded-lg">
                     <div>
-                      <p className="font-medium">Downtown Office Building</p>
-                      <p className="text-sm text-muted-foreground">Commercial Real Estate</p>
+                      <p className="font-medium">🌽 Organic Corn Farm</p>
+                      <p className="text-sm text-muted-foreground">Cropland - Iowa</p>
                     </div>
                     <div className="text-right">
-                      <p className="font-bold">9.2% APY</p>
-                      <Badge variant="outline" className="text-xs">Coming Soon</Badge>
+                      <p className="font-bold">15.2% APY</p>
+                      <Badge variant="outline" className="text-xs">Available</Badge>
                     </div>
                   </div>
                   
                   <div className="flex items-center justify-between p-3 border rounded-lg">
                     <div>
-                      <p className="font-medium">Gold Storage Facility</p>
-                      <p className="text-sm text-muted-foreground">Commodities</p>
+                      <p className="font-medium">🐄 Dairy Farm Operations</p>
+                      <p className="text-sm text-muted-foreground">Livestock - Wisconsin</p>
                     </div>
                     <div className="text-right">
-                      <p className="font-bold">6.8% APY</p>
-                      <Badge variant="outline" className="text-xs">Q2 2025</Badge>
+                      <p className="font-bold">11.8% APY</p>
+                      <Badge variant="outline" className="text-xs">Q3 2025</Badge>
                     </div>
                   </div>
                 </div>
                 
                 <Button className="w-full" variant="outline" asChild>
                   <Link href="/marketplace">
-                    View All Opportunities
+                    🔍 View All Farm Opportunities
                     <ArrowRight className="h-4 w-4 ml-2" />
                   </Link>
                 </Button>
@@ -280,9 +273,9 @@ export default function Dashboard() {
 
             <Card>
               <CardHeader>
-                <CardTitle>Recent Activity</CardTitle>
+                <CardTitle>📊 Recent Activity</CardTitle>
                 <CardDescription>
-                  Your latest transactions and updates
+                  Your latest farming investments and updates
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -290,8 +283,8 @@ export default function Dashboard() {
                   <div className="flex items-center gap-3">
                     <div className="h-2 w-2 bg-green-500 rounded-full"></div>
                     <div className="flex-1">
-                      <p className="text-sm font-medium">Welcome to RWA Investor</p>
-                      <p className="text-xs text-muted-foreground">Account created successfully</p>
+                      <p className="text-sm font-medium">🌾 Welcome to AgroToken</p>
+                      <p className="text-xs text-muted-foreground">Farm investment account created</p>
                     </div>
                     <p className="text-xs text-muted-foreground">Just now</p>
                   </div>
@@ -299,16 +292,15 @@ export default function Dashboard() {
                   <div className="flex items-center gap-3">
                     <div className="h-2 w-2 bg-blue-500 rounded-full"></div>
                     <div className="flex-1">
-                      <p className="text-sm font-medium">Compliance Verification</p>
-                      <p className="text-xs text-muted-foreground">KYC status updated</p>
+                      <p className="text-sm font-medium">✅ Organic Certification</p>
+                      <p className="text-xs text-muted-foreground">Verification status updated</p>
                     </div>
                     <p className="text-xs text-muted-foreground">2 min ago</p>
                   </div>
                 </div>
-                
-                <Button className="w-full" variant="outline" asChild>
-                  <Link href="/transfer">
-                    Make Your First Transfer
+                  <Button className="w-full" variant="outline" asChild>
+                  <Link href="/tokenize">
+                    🚀 List Your Farm
                     <ArrowRight className="h-4 w-4 ml-2" />
                   </Link>
                 </Button>

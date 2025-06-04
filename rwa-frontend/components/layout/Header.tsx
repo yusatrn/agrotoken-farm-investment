@@ -94,12 +94,11 @@ export function Header() {
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between px-4">
         {/* Logo and Navigation */}
-        <div className="flex items-center gap-8">
-          <Link href="/" className="flex items-center gap-3">
+        <div className="flex items-center gap-8">          <Link href="/" className="flex items-center gap-3">
             <Building2 className="h-8 w-8 text-primary" />
             <div>
-              <h1 className="text-lg font-bold">RWA Investor</h1>
-              <p className="text-xs text-muted-foreground">Real World Assets</p>
+              <h1 className="text-lg font-bold">AgroToken</h1>
+              <p className="text-xs text-muted-foreground">Farm Investment Platform</p>
             </div>
           </Link>
 
@@ -109,25 +108,25 @@ export function Header() {
               href="/dashboard" 
               className="text-sm font-medium transition-colors hover:text-primary"
             >
-              Dashboard
+              Farm Dashboard
             </Link>
             <Link 
               href="/marketplace" 
               className="text-sm font-medium transition-colors hover:text-primary"
             >
-              Marketplace
+              Agricultural Marketplace
             </Link>
             <Link 
               href="/tokenize" 
               className="text-sm font-medium transition-colors hover:text-primary"
             >
-              Tokenize
+              List Your Farm
             </Link>
             <Link 
               href="/transfer" 
               className="text-sm font-medium transition-colors hover:text-primary"
             >
-              Transfer
+              Share Transfer
             </Link>
           </nav>
         </div>

@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "RWA Investor - Real World Asset Platform",
-  description: "Access tokenized real estate, commodities, and other physical assets through compliant blockchain technology on Stellar.",
+  title: "AgroToken - Sustainable Agriculture Investment Platform",
+  description: "Invest in agricultural projects through blockchain technology. Support sustainable farming and earn returns from agricultural assets.",
 };
 
 export default function RootLayout({

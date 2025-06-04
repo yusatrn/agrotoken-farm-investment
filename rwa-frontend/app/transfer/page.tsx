@@ -134,29 +134,26 @@ export default function TransferPage() {
     <div className="min-h-screen bg-background">
       <Header />
       <main className="container mx-auto px-4 py-8">
-        <div className="max-w-2xl mx-auto space-y-6">
-          {/* Page Header */}
+        <div className="max-w-2xl mx-auto space-y-6">          {/* Page Header */}
           <div className="space-y-2">
-            <h1 className="text-3xl font-bold">Transfer RWA Tokens</h1>
+            <h1 className="text-3xl font-bold">🚀 Farm Share Transfer</h1>
             <p className="text-muted-foreground">
-              Send your tokenized real world asset shares to other verified investors
+              Send your agricultural investment shares to other verified farm investors
             </p>
-          </div>
-
-          {/* Compliance Status */}
+          </div>          {/* Compliance Status */}
           <Alert>
             <Info className="h-4 w-4" />
             <AlertDescription>
               <div className="flex items-center justify-between">
                 <span>
-                  Your compliance status: {' '}
+                  Your certification status: {' '}
                   <Badge variant={isWhitelisted ? 'default' : 'destructive'}>
-                    {isWhitelisted ? 'Verified' : 'Not Verified'}
+                    {isWhitelisted ? 'Organic Certified' : 'Pending Verification'}
                   </Badge>
                 </span>
                 {compliance?.kyc_verified && (
                   <Badge variant="outline" className="text-xs">
-                    KYC Complete
+                    Agricultural Compliance Complete
                   </Badge>
                 )}
               </div>
@@ -166,16 +163,16 @@ export default function TransferPage() {
           {/* Current Holdings */}
           <Card>
             <CardHeader>
-              <CardTitle>Your Holdings</CardTitle>
-              <CardDescription>Available RWA tokens for transfer</CardDescription>
+              <CardTitle>🌾 Your Farm Holdings</CardTitle>
+              <CardDescription>Available farm shares for transfer</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-2xl font-bold">{formatTokenAmount(userBalance)} LAPT</p>
-                  <p className="text-sm text-muted-foreground">Luxury Apartment NYC tokens</p>
+                  <p className="text-sm text-muted-foreground">Green Valley Organic Farm shares</p>
                 </div>
-                <Badge variant="secondary">Real Estate</Badge>
+                <Badge variant="secondary">🌽 Cropland</Badge>
               </div>
             </CardContent>
           </Card>
@@ -185,16 +182,16 @@ export default function TransferPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Send className="h-5 w-5" />
-                Transfer Tokens
+                Transfer Farm Shares
               </CardTitle>
               <CardDescription>
-                Enter the recipient address and amount to transfer
+                Enter the new farm investor address and share amount
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               {/* Recipient Address */}
               <div className="space-y-2">
-                <Label htmlFor="recipient">Recipient Address</Label>
+                <Label htmlFor="recipient">New Farm Investor Address</Label>
                 <Input
                   id="recipient"
                   placeholder="G... (Stellar address)"
