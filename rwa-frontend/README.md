@@ -1,315 +1,218 @@
-# RWA Investor Frontend
+# 🌾 AgroToken Farm Investment Platform
 
-A professional Next.js application for investing in Real World Asset (RWA) tokens on the Stellar blockchain. This platform enables investors to access tokenized real estate, commodities, and other physical assets through compliant blockchain technology.
+A comprehensive agricultural asset tokenization and investment platform built on the Stellar blockchain. This platform enables farmers to tokenize their agricultural assets and provides investors with opportunities to invest in sustainable farming projects.
 
-## 🎯 Features
+![AgroToken Platform](https://img.shields.io/badge/Stellar-Ready-blue) ![Next.js](https://img.shields.io/badge/Next.js-15.3.3-black) ![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue)
 
-### **Core Functionality (Phase 1 - Completed)**
-- ✅ **Wallet Integration**: Real Freighter wallet connection with network detection
-- ✅ **Professional Dashboard**: Portfolio overview with asset statistics  
-- ✅ **Token Transfer**: Secure RWA token transfers with compliance validation
-- ✅ **Compliance Tracking**: KYC and whitelist status monitoring
-- ✅ **Smart Contract Integration**: Mock contract client ready for production
-- ✅ **Real-time Updates**: Automatic wallet state monitoring and updates
+## 🚀 Features
 
-### **Architecture Highlights**
-- **Modern Stack**: Next.js 15 + TypeScript + Tailwind CSS + shadcn/ui
-- **State Management**: Zustand stores for wallet and contract state
-- **Type Safety**: Comprehensive TypeScript interfaces matching contract structure
-- **Professional UI**: Finance-focused design with Slate color scheme
-- **Responsive Design**: Desktop-first approach with mobile optimization
+### 🎯 Core Functionality
+- **Agricultural Asset Tokenization**: Convert real-world farm assets into digital tokens
+- **Investment Marketplace**: Browse and invest in diverse agricultural opportunities  
+- **Stellar Wallet Integration**: Seamless connection with Freighter wallet
+- **Real-time Balance Display**: Live XLM balance fetching from Stellar network
+- **Multi-network Support**: Testnet and Mainnet compatibility
 
-## 🚀 Quick Start
+### 🌱 Agricultural Focus
+- **Farm Investment Opportunities**: Organic farms, sustainable agriculture
+- **Harvest-based Returns**: Investment returns tied to crop harvests
+- **Certification Tracking**: Organic and sustainability certifications
+- **Rural Development**: Supporting agricultural communities
+
+### 💡 Technical Features
+- **Modern UI/UX**: Clean, responsive design with Tailwind CSS
+- **Type Safety**: Full TypeScript implementation
+- **Real Blockchain Integration**: Live Stellar network connectivity
+- **Production Ready**: Optimized builds and deployment configurations
+
+## 🛠️ Tech Stack
+
+- **Frontend**: Next.js 15.3.3, React 19, TypeScript
+- **Styling**: Tailwind CSS, Radix UI components
+- **Blockchain**: Stellar SDK, Freighter wallet integration
+- **State Management**: Zustand
+- **Build Tools**: ESLint, TypeScript compiler
+- **Deployment**: Vercel-ready configuration
+
+## ⚡ Quick Start
 
 ### Prerequisites
 - Node.js 18+ 
-- [Freighter Wallet](https://freighter.app/) browser extension
-- Access to Stellar Testnet
+- npm or yarn
+- Git
 
 ### Installation
 
-```bash
-# Clone and install
-git clone <repository>
-cd rwa-frontend
-npm install
+1. **Clone the repository**
+   ```bash
+   git clone <your-repo-url>
+   cd agrotoken-farm-investment/rwa-frontend
+   ```
 
-# Start development server
-npm run dev
-```
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-Visit `http://localhost:3000` to see the application.
+3. **Set up environment variables**
+   ```bash
+   cp .env.example .env.local
+   ```
+   
+   Edit `.env.local`:
+   ```env
+   NEXT_PUBLIC_STELLAR_NETWORK=testnet
+   NEXT_PUBLIC_STELLAR_HORIZON_URL=https://horizon-testnet.stellar.org
+   NEXT_PUBLIC_APP_NAME=AgroToken Farm Investment
+   ```
 
-### Production Build
-```bash
-npm run build
-npm start
-```
+4. **Start development server**
+   ```bash
+   npm run dev
+   ```
 
-## 🏗️ Project Architecture
+5. **Open in browser**
+   ```
+   http://localhost:3000
+   ```
 
-### **Directory Structure**
+## 🌐 Deployment
+
+### Quick Deploy to Vercel
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/your-username/agrotoken-farm-investment)
+
+### Manual Deployment
+
+1. **Build for production**
+   ```bash
+   npm run build
+   ```
+
+2. **Deploy using deployment script**
+   ```bash
+   # Linux/Mac
+   chmod +x deploy.sh
+   ./deploy.sh
+   
+   # Windows PowerShell
+   .\deploy.ps1
+   ```
+
+3. **Set environment variables** in your deployment platform:
+   - `NEXT_PUBLIC_STELLAR_NETWORK=testnet` (or `mainnet`)
+   - `NEXT_PUBLIC_STELLAR_HORIZON_URL=https://horizon-testnet.stellar.org`
+   - `NEXT_PUBLIC_APP_NAME=AgroToken Farm Investment`
+
+For detailed deployment instructions, see [DEPLOYMENT.md](./DEPLOYMENT.md)
+
+## 🔗 Wallet Integration
+
+### Freighter Wallet Setup
+1. Install [Freighter Wallet](https://freighter.app/) browser extension
+2. Create or import a Stellar account
+3. For testnet: Fund account using [Stellar Friendbot](https://friendbot.stellar.org/)
+4. Connect wallet through the platform interface
+
+### Supported Networks
+- **Testnet**: For development and testing
+- **Mainnet**: For production use
+
+## 📱 Platform Overview
+
+### Dashboard
+- Portfolio overview with farm token holdings
+- Investment performance metrics
+- Quick access to platform features
+
+### Agricultural Marketplace  
+- Browse available farm investment opportunities
+- Filter by crop type, location, and certification
+- View detailed asset information and returns
+
+### Asset Tokenization
+- Convert physical farm assets to digital tokens
+- Set investment terms and token distribution
+- Manage asset metadata and documentation
+
+### Share Transfer
+- Send and receive agricultural tokens
+- Track transaction history
+- Manage token distributions
+
+## 🏗️ Project Structure
+
 ```
 rwa-frontend/
-├── app/                    # Next.js App Router
-│   ├── page.tsx           # Main dashboard  
-│   ├── transfer/          # Token transfer page
-│   ├── layout.tsx         # Root layout
-│   └── globals.css        # Global styles
-├── components/
-│   ├── ui/                # shadcn/ui components
-│   └── layout/            # Layout components (Header)
-├── lib/
-│   ├── types.ts           # TypeScript definitions
-│   ├── stellar.ts         # Stellar SDK utilities
-│   ├── contract.ts        # Smart contract client
-│   └── utils.ts           # Helper functions
-├── stores/
-│   ├── wallet.ts          # Wallet state (Zustand)
-│   └── contract.ts        # Contract state (Zustand)
-└── public/                # Static assets
+├── app/                    # Next.js app router pages
+│   ├── dashboard/         # Portfolio dashboard
+│   ├── marketplace/       # Investment marketplace
+│   ├── tokenize/         # Asset tokenization
+│   └── transfer/         # Token transfers
+├── components/            # Reusable UI components
+│   ├── layout/           # Layout components
+│   └── ui/               # Base UI components
+├── hooks/                # Custom React hooks
+├── lib/                  # Utility libraries
+│   ├── stellar.ts        # Stellar network configuration
+│   ├── contract.ts       # Smart contract interface
+│   └── types.ts          # TypeScript definitions
+├── stores/               # State management
+│   ├── wallet.ts         # Wallet connection state
+│   └── contract.ts       # Contract interaction state
+└── public/               # Static assets
 ```
 
-### **Smart Contract Integration**
+## 🧪 Testing
 
-**Contract ID**: `CBQAAC4EHNMMHEI2W3QU6UQ5N4KSVYRLVTB5M2XMARCNS4CNLWMX3VQ6`
-**Network**: Stellar Testnet
-**Asset**: Luxury Apartment NYC (LAPT) - Premium Manhattan real estate token
-
-**Supported Operations**:
-- ✅ Balance queries
-- ✅ Asset metadata retrieval  
-- ✅ Compliance status checking
-- ✅ Token transfers (with validation)
-- ✅ Whitelist verification
-- 🔄 Admin functions (minting, pausing)
-
-### **State Management**
-
-**Wallet Store** (`stores/wallet.ts`):
-- Connection status and user address
-- Network selection (testnet/mainnet)
-- XLM balance tracking
-- Connection management
-
-**Contract Store** (`stores/contract.ts`):
-- Asset metadata and total supply
-- User token balance and compliance status
-- Transaction handling
-- Error and loading states
-
-## 🎨 Design System
-
-### **Color Palette**
-- **Primary**: Deep blue (#1e40af) for professional finance look
-- **Secondary**: Light gray-blue for backgrounds
-- **Success**: Green for positive actions and status
-- **Warning**: Amber for alerts and pending states
-- **Error**: Red for validation and error states
-
-### **Typography**
-- **Body**: System fonts (Inter equivalent) for readability
-- **Monospace**: For addresses, hashes, and numerical data
-- **Hierarchy**: Clear sizing scale for financial data
-
-### **Components**
-- **Cards**: Clean borders with subtle shadows
-- **Buttons**: Consistent sizing with proper loading states  
-- **Forms**: Comprehensive validation with error messages
-- **Badges**: Status indicators for compliance and asset types
-- **Alerts**: Contextual information and warnings
-
-## 🔧 Configuration
-
-### **Environment Variables**
-```env
-# Optional - defaults are set in code
-NEXT_PUBLIC_STELLAR_NETWORK=testnet
-NEXT_PUBLIC_CONTRACT_ID=CBQAAC4EHNMMHEI2W3QU6UQ5N4KSVYRLVTB5M2XMARCNS4CNLWMX3VQ6
+### Development Testing
+```bash
+npm run dev
+# Test wallet connection and features
 ```
 
-### **Network Configuration**
-```typescript
-// lib/stellar.ts
-export const NETWORKS = {
-  testnet: {
-    networkPassphrase: Networks.TESTNET,
-    horizonUrl: 'https://horizon-testnet.stellar.org',
-    sorobanUrl: 'https://soroban-testnet.stellar.org',
-    explorerUrl: 'https://stellar.expert/explorer/testnet'
-  },
-  mainnet: { /* ... */ }
-};
+### Production Build Testing
+```bash
+npm run build
+npm run start
 ```
 
-## 💼 Investment Features
+### Wallet Connection Testing
+1. Install Freighter wallet extension
+2. Create testnet account and fund with friendbot
+3. Test connection, balance display, and network switching
 
-### **Dashboard Overview**
-- **Portfolio Value**: Real-time token holdings and USD equivalent
-- **Compliance Status**: KYC verification and whitelist status  
-- **Yield Information**: Projected annual returns and distribution timeline
-- **Quick Actions**: Transfer, marketplace, and tokenization links
+## 🔒 Security
 
-### **Transfer Interface** 
-- **Address Validation**: Real-time Stellar address format checking
-- **Compliance Verification**: Recipient whitelist and KYC validation
-- **Amount Controls**: Max button and balance validation
-- **Transaction Preview**: Fee estimation and confirmation details
-- **Security**: Multiple validation layers before execution
-
-### **Asset Information**
-- **Metadata Display**: Name, description, and asset type
-- **Valuation Tracking**: Current value and last update timestamp
-- **Ownership Percentage**: User's share of total asset
-- **Legal Documentation**: Hash verification for property deeds
-
-## 🔐 Security & Compliance
-
-### **Wallet Security**
-- **Non-custodial**: Users maintain control of private keys
-- **Session Management**: Automatic connection checking
-- **Network Validation**: Testnet/mainnet switching with confirmation
-
-### **Transaction Safety**
-- **Multi-step Validation**: Address format, compliance, and balance checks
-- **Confirmation Dialogs**: Clear transaction details before execution  
-- **Error Handling**: Graceful failure management with user feedback
-- **Fee Transparency**: Network fee estimation and display
-
-### **Compliance Framework**
-- **KYC Integration**: Verification status tracking
-- **Jurisdiction Compliance**: Location-based transfer restrictions
-- **Whitelist Management**: Automated address verification
-- **Audit Trail**: Transaction history and compliance logs
-
-## 🚧 Development Roadmap
-
-### **Phase 2: Enhanced Trading** (Planned)
-- [ ] Asset marketplace with filtering and search
-- [ ] Investment calculator with ROI projections  
-- [ ] Order book and trading interface
-- [ ] Price charts and market data
-
-### **Phase 3: Tokenization Engine** (Planned)
-- [ ] Multi-step asset tokenization wizard
-- [ ] Document upload and verification system
-- [ ] Legal compliance automation
-- [ ] Smart contract deployment interface
-
-### **Phase 4: Advanced Features** (Planned)
-- [ ] Admin panel with role-based access
-- [ ] Revenue distribution automation
-- [ ] Advanced analytics and reporting  
-- [ ] Mobile app (React Native)
-
-## 🧪 Testing Strategy
-
-### **Current Implementation**
-- **Mock Contract Client**: Simulates all smart contract interactions
-- **Test Data**: Realistic asset metadata and balances
-- **Validation Testing**: Address format and compliance checking
-- **Error Simulation**: Network failures and validation errors
-
-### **Production Preparation**
-- [ ] Unit tests for utilities and components
-- [ ] Integration tests for wallet and contract interactions
-- [ ] E2E tests for critical user flows
-- [ ] Smart contract integration testing
-
-## 🐛 Known Issues & Limitations
-
-### **Current Limitations**
-- **Simulated Compliance**: Recipient compliance checking is mocked
-- **Static Data**: Asset metadata and balances are not live
-- **Network Warnings**: Stellar SDK warnings in build (expected)
-- **Network Switching**: Users must manually switch networks in Freighter extension
-
-### **Freighter Integration**
-The application now uses the official Freighter API for wallet connection:
-
-```typescript
-// stores/wallet.ts - Production implementation
-import {
-  isConnected,
-  requestAccess,
-  getAddress,
-  getNetwork,
-  getNetworkDetails,
-  WatchWalletChanges
-} from '@stellar/freighter-api';
-
-const connect = async () => {
-  const connectionResult = await isConnected();
-  const accessResult = await requestAccess();
-  const networkResult = await getNetworkDetails();
-  // Real wallet integration with proper error handling
-};
-```
-
-**Features:**
-- ✅ Real wallet connection detection
-- ✅ Automatic network detection (Testnet/Mainnet)
-- ✅ Address retrieval and validation
-- ✅ Real-time wallet state monitoring
-- ✅ Proper error handling and user feedback
-- ✅ Automatic disconnection on extension disable
-
-## 📚 Smart Contract Details
-
-### **Asset Metadata Structure**
-```typescript
-interface AssetMetadata {
-  name: string;              // "Luxury Apartment NYC"
-  symbol: string;            // "LAPT"  
-  asset_type: string;        // "real_estate"
-  description: string;       // Asset description
-  valuation: string;         // Current USD value (i128)
-  last_valuation_date: number; // Unix timestamp
-  legal_doc_hash: string;    // Property deed hash
-}
-```
-
-### **Compliance Data Structure**
-```typescript
-interface ComplianceData {
-  kyc_verified: boolean;     // KYC completion status
-  accredited_investor: boolean; // Accreditation status
-  jurisdiction: string;      // Legal jurisdiction
-  compliance_expiry: number; // Compliance expiration
-}
-```
+- **Client-side wallet integration** (no private keys stored)
+- **Environment variable configuration** for sensitive data
+- **Secure network communication** with Stellar
+- **Production-ready security headers**
 
 ## 🤝 Contributing
 
-1. **Fork the repository**
-2. **Create feature branch**: `git checkout -b feature/amazing-feature`
-3. **Make changes**: Follow the existing code style and patterns
-4. **Test thoroughly**: Ensure no regressions  
-5. **Submit PR**: Include clear description of changes
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-### **Code Style**
-- **TypeScript**: Strict mode with comprehensive type definitions
-- **Components**: Functional components with proper prop typing
-- **Styling**: Tailwind CSS with shadcn/ui component patterns
-- **State**: Zustand stores with typed interfaces
+## 📞 Support
+
+- **Documentation**: See [DEPLOYMENT.md](./DEPLOYMENT.md)
+- **Issues**: Open a GitHub issue
+- **Questions**: Check existing discussions
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
+This project is licensed under the MIT License - see the [LICENSE](../LICENSE) file for details.
 
-## 🆘 Support
+## 🙏 Acknowledgments
 
-### **Common Issues**
-- **Wallet Connection**: Ensure Freighter extension is installed and enabled
-- **Network Issues**: Check Stellar Testnet status and connectivity
-- **Build Warnings**: Stellar SDK warnings are expected in web environments
-
-### **Resources**
-- [Stellar Documentation](https://developers.stellar.org/)
-- [Freighter Wallet](https://freighter.app/)
-- [shadcn/ui Components](https://ui.shadcn.com/)
-- [Next.js Documentation](https://nextjs.org/docs)
+- Built on the [Stellar blockchain](https://stellar.org)
+- UI components from [Radix UI](https://radix-ui.com)
+- Styling with [Tailwind CSS](https://tailwindcss.com)
+- Wallet integration via [Freighter](https://freighter.app)
 
 ---
 
-**Built with ❤️ for the future of tokenized real world assets**
+**🌾 Supporting Sustainable Agriculture Through Blockchain Technology**

@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { AssetMetadata, ComplianceData, ContractInfo } from '@/lib/types';
-import { createContractClient, getContractInfo, getUserContractData } from '@/lib/contract';
+import { createContractClient, getContractInfo, getUserContractData, createContractClientWithFallback } from '@/lib/contract';
 import { RWA_CONTRACT_ID } from '@/lib/stellar';
 
 interface ContractStore {
@@ -120,7 +120,7 @@ export const useContractStore = create<ContractStore>((set, get) => ({
     try {
       console.log(`Refreshing balance for ${address}...`);
       
-      const client = createContractClient(contractId);
+      const client = await createContractClientWithFallback(contractId);
       const balance = await client.balance(address);
       
       set({
@@ -134,7 +134,6 @@ export const useContractStore = create<ContractStore>((set, get) => ({
       // Don't set error state for balance refresh failures
     }
   },
-
   // Transfer tokens
   transfer: async (from: string, to: string, amount: string): Promise<boolean> => {
     const { contractId } = get();
@@ -143,7 +142,7 @@ export const useContractStore = create<ContractStore>((set, get) => ({
     try {
       console.log(`Initiating transfer: ${amount} tokens from ${from} to ${to}`);
       
-      const client = createContractClient(contractId);
+      const client = await createContractClientWithFallback(contractId);
       const success = await client.transfer(from, to, amount);
       
       if (success) {

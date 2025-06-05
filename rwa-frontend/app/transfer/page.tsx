@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useWalletStore } from '@/stores/wallet';
 import { useContractStore } from '@/stores/contract';
+import { ComplianceData } from '@/lib/types';
 import { Header } from '@/components/layout/Header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -33,12 +34,10 @@ export default function TransferPage() {
     fetchUserData,
     fetchContractData
   } = useContractStore();
-
   const [recipient, setRecipient] = useState('');
   const [amount, setAmount] = useState('');
   const [isValidRecipient, setIsValidRecipient] = useState(false);
-  const [recipientCompliance, setRecipientCompliance] = useState<any>(null);
-  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [recipientCompliance, setRecipientCompliance] = useState<ComplianceData | null>(null);
 
   // Load data on mount and when wallet connects
   useEffect(() => {
@@ -54,12 +53,12 @@ export default function TransferPage() {
       const valid = isValidStellarAddress(recipient);
       setIsValidRecipient(valid);
       
-      if (valid) {
-        // In a real app, this would check recipient compliance
+      if (valid) {        // In a real app, this would check recipient compliance
         setRecipientCompliance({
-          isWhitelisted: true,
           kyc_verified: true,
-          jurisdiction: 'US'
+          accredited_investor: false,
+          jurisdiction: 'US',
+          compliance_expiry: Math.floor(Date.now() / 1000) + (365 * 24 * 60 * 60)
         });
       } else {
         setRecipientCompliance(null);
@@ -89,12 +88,10 @@ export default function TransferPage() {
     try {
       const contractAmount = toContractAmount(amount);
       const success = await transfer(address, recipient, contractAmount);
-      
-      if (success) {
+        if (success) {
         toast.success('Transfer completed successfully!');
         setAmount('');
         setRecipient('');
-        setShowConfirmation(false);
       } else {
         toast.error('Transfer failed. Please try again.');
       }

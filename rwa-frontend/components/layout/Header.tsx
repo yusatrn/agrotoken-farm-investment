@@ -1,19 +1,18 @@
 'use client';
 
-import { useEffect } from 'react';
 import Link from 'next/link';
-import { useWalletStore } from '@/stores/wallet';
+import { useWalletConnection } from '@/hooks/useWalletConnection';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { 
   Building2, 
   Wallet, 
   Network, 
-  Settings, 
   LogOut,
   ExternalLink,
   Copy,
-  ChevronDown 
+  ChevronDown,
+  Loader2
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -22,59 +21,40 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { truncateAddress, getExplorerUrl } from '@/lib/stellar';
+import { getExplorerUrl } from '@/lib/stellar';
 import { toast } from 'sonner';
 
 export function Header() {
   const {
     isConnected,
     address,
-    balance,
     network,
     isLoading,
     connect,
     disconnect,
-    switchNetwork,
-    checkConnection
-  } = useWalletStore();
-
-  // Check connection on mount
-  useEffect(() => {
-    checkConnection();
-  }, [checkConnection]);
+    getDisplayAddress,
+    getDisplayBalance,
+    getNetworkDisplay
+  } = useWalletConnection();
 
   const handleConnect = async () => {
-    try {
-      await connect();
-      toast.success('Wallet connected successfully');
-    } catch (error) {
-      toast.error('Failed to connect wallet');
-    }
+    await connect();
   };
 
   const handleDisconnect = () => {
     disconnect();
-    toast.info('Wallet disconnected');
   };
 
   const handleNetworkSwitch = async (newNetwork: 'testnet' | 'mainnet') => {
     if (newNetwork === network) return;
     
-    try {
-      await switchNetwork(newNetwork);
-      toast.success(`Switched to ${newNetwork}`);
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : `Failed to switch to ${newNetwork}`;
-      
-      // Check if this is a manual switch required error
-      if (errorMessage.includes('Please switch to')) {
-        toast.error(errorMessage, {
-          duration: 6000, // Show longer for important instructions
-        });
-      } else {
-        toast.error(errorMessage);
+    const targetNetwork = newNetwork === 'mainnet' ? 'Mainnet (PUBLIC)' : 'Testnet';
+    toast.error(
+      `Please switch to ${targetNetwork} in your Freighter wallet settings, then reconnect.`,
+      {
+        duration: 6000,
       }
-    }
+    );
   };
 
   const copyAddress = () => {
@@ -94,21 +74,26 @@ export function Header() {
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between px-4">
         {/* Logo and Navigation */}
-        <div className="flex items-center gap-8">          <Link href="/" className="flex items-center gap-3">
+        <div className="flex items-center gap-8">
+          <Link href="/" className="flex items-center gap-3">
             <Building2 className="h-8 w-8 text-primary" />
             <div>
               <h1 className="text-lg font-bold">AgroToken</h1>
               <p className="text-xs text-muted-foreground">Farm Investment Platform</p>
             </div>
-          </Link>
-
-          {/* Navigation Links */}
+          </Link>          {/* Navigation Links */}
           <nav className="hidden md:flex items-center gap-6">
             <Link 
               href="/dashboard" 
               className="text-sm font-medium transition-colors hover:text-primary"
             >
               Farm Dashboard
+            </Link>
+            <Link 
+              href="/invest" 
+              className="text-sm font-medium transition-colors hover:text-primary"
+            >
+              💰 Invest Now
             </Link>
             <Link 
               href="/marketplace" 
@@ -128,6 +113,12 @@ export function Header() {
             >
               Share Transfer
             </Link>
+            <Link 
+              href="/debug" 
+              className="text-xs font-mono text-muted-foreground transition-colors hover:text-primary"
+            >
+              Debug
+            </Link>
           </nav>
         </div>
 
@@ -137,13 +128,13 @@ export function Header() {
           {isConnected && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="gap-2">
+                <div className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 px-3 gap-2 cursor-pointer">
                   <Network className="h-4 w-4" />
                   <Badge variant={network === 'testnet' ? 'secondary' : 'default'}>
-                    {network}
+                    {getNetworkDisplay()}
                   </Badge>
                   <ChevronDown className="h-3 w-3" />
-                </Button>
+                </div>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem 
@@ -168,18 +159,18 @@ export function Header() {
           {isConnected ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="gap-2 max-w-48">
+                <div className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 px-3 gap-2 cursor-pointer">
                   <Wallet className="h-4 w-4" />
-                  <div className="text-left">
-                    <div className="font-mono text-sm">
-                      {truncateAddress(address || '')}
-                    </div>
-                    <div className="text-xs text-muted-foreground">
-                      {parseFloat(balance).toFixed(2)} XLM
-                    </div>
+                  <div className="flex flex-col items-start">
+                    <span className="text-xs text-muted-foreground">
+                      {getDisplayAddress()}
+                    </span>
+                    <span className="font-mono text-xs">
+                      {getDisplayBalance()} XLM
+                    </span>
                   </div>
-                  <ChevronDown className="h-3 w-3" />
-                </Button>
+                  <ChevronDown className="h-4 w-4" />
+                </div>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
                 <div className="px-2 py-1.5">
@@ -208,14 +199,25 @@ export function Header() {
             <Button 
               onClick={handleConnect} 
               disabled={isLoading}
+              variant="outline"
+              size="sm"
               className="gap-2"
             >
-              <Wallet className="h-4 w-4" />
-              {isLoading ? 'Connecting...' : 'Connect Wallet'}
+              {isLoading ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Connecting...
+                </>
+              ) : (
+                <>
+                  <Wallet className="h-4 w-4" />
+                  Connect Wallet
+                </>
+              )}
             </Button>
           )}
         </div>
       </div>
     </header>
   );
-} 
+}

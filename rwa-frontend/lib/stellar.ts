@@ -14,16 +14,17 @@ export const NETWORKS: Record<'testnet' | 'mainnet', NetworkConfig> = {
     name: 'Mainnet',
     networkPassphrase: Networks.PUBLIC,
     horizonUrl: 'https://horizon.stellar.org',
-    sorobanUrl: 'https://soroban.stellar.org',
+    sorobanUrl: 'https://mainnet.sorobanrpc.com',
     explorerUrl: 'https://stellar.expert/explorer/public'
   }
 };
 
-// Default network for development
-export const DEFAULT_NETWORK: 'testnet' | 'mainnet' = 'testnet';
+// Default network for development - use environment variable or default to testnet
+export const DEFAULT_NETWORK: 'testnet' | 'mainnet' = 
+  (process.env.NEXT_PUBLIC_STELLAR_NETWORK as 'testnet' | 'mainnet') || 'testnet';
 
 // Your deployed RWA contract ID
-export const RWA_CONTRACT_ID = 'CBQAAC4EHNMMHEI2W3QU6UQ5N4KSVYRLVTB5M2XMARCNS4CNLWMX3VQ6';
+export const RWA_CONTRACT_ID = 'CD22CFPEPDUXEBYLZ3LJA233UI5WRVQNT4UVWDKSOYONACWBQ5JMG5EX';
 
 // Create Soroban RPC server instance
 export const createSorobanServer = (network: 'testnet' | 'mainnet' = DEFAULT_NETWORK) => {
@@ -233,24 +234,24 @@ export const validatePercentage = (value: string): boolean => {
 };
 
 // Error handling utilities
-export const parseContractError = (error: any): string => {
+export const parseContractError = (error: unknown): string => {
   if (typeof error === 'string') return error;
-  
-  if (error?.message) {
+    if (error && typeof error === 'object' && 'message' in error) {
+    const errorMessage = (error as Error).message;
     // Parse common Soroban error messages
-    if (error.message.includes('insufficient_balance')) {
+    if (errorMessage.includes('insufficient_balance')) {
       return 'Insufficient balance for this transaction';
     }
-    if (error.message.includes('not_whitelisted')) {
+    if (errorMessage.includes('not_whitelisted')) {
       return 'Address not whitelisted for this asset';
     }
-    if (error.message.includes('compliance_expired')) {
+    if (errorMessage.includes('compliance_expired')) {
       return 'Compliance verification has expired';
     }
-    if (error.message.includes('contract_paused')) {
+    if (errorMessage.includes('contract_paused')) {
       return 'Contract is currently paused';
     }
-    return error.message;
+    return errorMessage;
   }
   
   return 'Unknown error occurred';

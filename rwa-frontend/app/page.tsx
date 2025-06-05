@@ -8,26 +8,21 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { 
-  Building2, 
-  Coins, 
   TrendingUp, 
-  Users,
   ArrowRight,
   CheckCircle,
   AlertCircle,
   Clock
 } from 'lucide-react';
-import { formatTokenAmount, formatCurrency, formatPercentage } from '@/lib/stellar';
+import { formatTokenAmount, formatCurrency } from '@/lib/stellar';
 import Link from 'next/link';
 
 export default function Dashboard() {
-  const { isConnected, address, checkConnection } = useWalletStore();
-  const { 
+  const { isConnected, address, checkConnection } = useWalletStore();  const { 
     assetMetadata, 
     userBalance, 
     isWhitelisted, 
     compliance,
-    isLoading,
     fetchContractData,
     fetchUserData 
   } = useContractStore();
@@ -115,20 +110,79 @@ export default function Dashboard() {
             </p>
           </div>
 
+          {/* Quick Investment Section */}
+          <Card className="border-green-200 bg-gradient-to-r from-green-50 to-emerald-50">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                💰 Start Investing in Farm Assets
+                <Badge variant="secondary">New</Badge>
+              </CardTitle>
+              <CardDescription>
+                Choose from our curated selection of agricultural investment opportunities
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="p-4 bg-white rounded-lg border">
+                  <h4 className="font-semibold text-green-600">Organic Farm - Basic</h4>
+                  <p className="text-sm text-gray-600 mb-2">Low risk, steady returns</p>
+                  <div className="flex justify-between items-center mb-3">
+                    <span className="text-lg font-bold">8.5% APY</span>
+                    <Badge variant="secondary">Low Risk</Badge>
+                  </div>
+                  <p className="text-xs text-gray-500">Min: $100 USDC</p>
+                </div>
+                
+                <div className="p-4 bg-white rounded-lg border">
+                  <h4 className="font-semibold text-blue-600">Organic Farm - Premium</h4>
+                  <p className="text-sm text-gray-600 mb-2">Higher returns, proven track record</p>
+                  <div className="flex justify-between items-center mb-3">
+                    <span className="text-lg font-bold">12.0% APY</span>
+                    <Badge variant="default">Medium Risk</Badge>
+                  </div>
+                  <p className="text-xs text-gray-500">Min: $1,000 USDC</p>
+                </div>
+                
+                <div className="p-4 bg-white rounded-lg border">
+                  <h4 className="font-semibold text-orange-600">AgTech Innovation</h4>
+                  <p className="text-sm text-gray-600 mb-2">Cutting-edge agricultural technology</p>
+                  <div className="flex justify-between items-center mb-3">
+                    <span className="text-lg font-bold">15.0% APY</span>
+                    <Badge variant="destructive">High Risk</Badge>
+                  </div>
+                  <p className="text-xs text-gray-500">Min: $500 USDC</p>
+                </div>
+              </div>
+              
+              <div className="mt-6 flex flex-col sm:flex-row gap-3">
+                <Link href="/invest" className="flex-1">
+                  <Button className="w-full bg-green-600 hover:bg-green-700">
+                    View All Investment Options
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </Link>
+                <Link href="/marketplace" className="flex-1">
+                  <Button variant="outline" className="w-full">
+                    Browse Marketplace
+                  </Button>
+                </Link>
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Portfolio Overview Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <Card>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">            <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Farm Portfolio Value</CardTitle>
-                <div className="text-xl">🚜</div>
+                <CardTitle className="text-sm font-medium">Farm Token Holdings</CardTitle>
+                <div className="text-xl">🌾</div>
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">
-                  {formatTokenAmount(userBalance)} LAPT
+                  {formatTokenAmount(userBalance)} {assetMetadata?.symbol || 'OWTX'}
                 </div>
                 <p className="text-xs text-muted-foreground">
                   ≈ {formatCurrency(
-                    (parseFloat(formatTokenAmount(userBalance)) * 1000).toString()
+                    (parseFloat(formatTokenAmount(userBalance)) * 300).toString()
                   )}
                 </p>
               </CardContent>

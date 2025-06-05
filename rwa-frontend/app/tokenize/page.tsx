@@ -13,14 +13,11 @@ import {
   Building2, 
   FileText, 
   Shield, 
-  Clock,
   Check,
   ArrowRight,
   ArrowLeft,
   Upload,
   AlertCircle,
-  DollarSign,
-  Users,
   Briefcase,
   Coins,
   Calculator,
@@ -93,7 +90,7 @@ const TOKENIZATION_STEPS = [
 ];
 
 export default function TokenizePage() {
-  const { isConnected, address } = useWalletStore();
+  const { isConnected } = useWalletStore();
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
     // Step 1: Asset Details
@@ -123,9 +120,7 @@ export default function TokenizePage() {
     launchDate: '',
     fundingGoal: '',
     fundingDeadline: ''
-  });
-
-  const updateFormData = (field: string, value: any) => {
+  });  const updateFormData = (field: string, value: string | number | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 

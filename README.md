@@ -156,262 +156,204 @@ interface AssetMetadata {
 
 ---
 
-## 🎨 **User Interface Guide**
+## 📦 **Smart Contract Deployment**
 
-### **🌾 Farm Dashboard Page (`/`)**
-- Farm portfolio value and performance metrics
-- Organic certification status indicators
-- Quick action buttons for farm operations
-- Agricultural investment opportunities overview
+### **Prerequisites for Deployment**
+- Rust programming language ([Install Rust](https://rustup.rs/))
+- Soroban CLI (`cargo install --locked soroban-cli`)
+- WASM target (`rustup target add wasm32-unknown-unknown`)
 
-### **🚜 Agricultural Marketplace Page (`/marketplace`)**
-- Farm asset discovery with search and filtering
-- Agricultural investment statistics and analytics
-- Farm asset cards with key metrics and harvest projections
-- Direct farm investment flow
+### **Quick Deployment (Automated)**
+```powershell
+# Run the automated deployment script
+.\deploy-contract.ps1
 
-### **🌱 List Your Farm Page (`/tokenize`)**
-- 5-step farm tokenization wizard
-- Agricultural document upload and verification
-- Farm share economics configuration
-- Organic compliance settings and deployment
+# Test your deployed contract
+.\test-contract.ps1 -ContractId YOUR_CONTRACT_ID
+```
 
-### **🚀 Farm Share Transfer Page (`/transfer`)**
-- Secure farm share transfer interface
-- Address validation and agricultural compliance checking
-- Transaction preview and confirmation
-- Real-time farm portfolio balance updates
+### **Manual Deployment Steps**
 
----
-
-## 🔐 **Security & Compliance**
-
-### **Wallet Security**
-- Non-custodial wallet integration
-- Private key remains with user
-- Session management and auto-disconnect
-- Network validation and switching
-
-### **Transaction Safety**
-- Multi-step validation process
-- Compliance verification before transfers
-- Clear transaction previews
-- Comprehensive error handling
-
-### **Regulatory Compliance**
-- KYC verification requirements
-- Jurisdiction-based restrictions
-- Accredited investor validation
-- Audit trail maintenance
-
----
-
-## 🌟 **Current Features**
-
-### **✅ Phase 1: Core Investment Platform (Completed)**
-- [x] Professional investor dashboard
-- [x] Asset marketplace with filtering
-- [x] Secure token transfer system
-- [x] Freighter wallet integration
-- [x] Smart contract mock client
-- [x] Responsive UI/UX design
-- [x] TypeScript type safety
-- [x] Compliance tracking
-
-### **🔄 Phase 2: Enhanced Trading (In Development)**
-- [ ] Advanced marketplace features
-- [ ] Investment calculator and ROI projections
-- [ ] Order book and trading interface
-- [ ] Price charts and market data
-- [ ] Portfolio analytics
-
-### **📋 Phase 3: Tokenization Engine (Planned)**
-- [ ] Complete tokenization wizard
-- [ ] Document verification system
-- [ ] Legal compliance automation
-- [ ] Smart contract deployment
-- [ ] Asset management tools
-
-### **🔮 Phase 4: Advanced Features (Future)**
-- [ ] Admin panel with role-based access
-- [ ] Revenue distribution automation
-- [ ] Advanced analytics and reporting
-- [ ] Mobile application (React Native)
-- [ ] Multi-chain support
-
----
-
-## 🛠️ **Development**
-
-### **Environment Setup**
-
+1. **Generate Stellar Account**
 ```bash
-# Install dependencies
-npm install
-
-# Start development server with hot reload
-npm run dev
-
-# Type checking
-npm run type-check
-
-# Linting
-npm run lint
-
-# Build production bundle
-npm run build
+soroban keys generate alice
+soroban keys address alice
 ```
 
-### **Environment Variables**
+2. **Configure Testnet**
+```bash
+soroban network add testnet \
+  --rpc-url https://soroban-testnet.stellar.org:443 \
+  --network-passphrase "Test SDF Network ; September 2015"
 
-```env
-# Optional - defaults are provided
-NEXT_PUBLIC_STELLAR_NETWORK=testnet
-NEXT_PUBLIC_CONTRACT_ID=CBQAAC4EHNMMHEI2W3QU6UQ5N4KSVYRLVTB5M2XMARCNS4CNLWMX3VQ6
+soroban network use testnet
 ```
 
-### **Configuration Files**
+3. **Fund Account**
+```bash
+soroban keys fund alice --network testnet
+```
 
-| File | Purpose |
-|------|---------|
-| `next.config.ts` | Next.js configuration |
-| `tailwind.config.ts` | Tailwind CSS settings |
-| `tsconfig.json` | TypeScript configuration |
-| `components.json` | shadcn/ui component config |
+4. **Build Contract**
+```bash
+cargo build --target wasm32-unknown-unknown --release
+```
 
----
+5. **Deploy to Testnet**
+```bash
+soroban contract deploy \
+  --wasm target/wasm32-unknown-unknown/release/agrotoken_farm_investment.wasm \
+  --source alice \
+  --network testnet
+```
 
-## 🧪 **Testing Strategy**
+6. **Update Frontend Configuration**
+After deployment, update the contract ID in `rwa-frontend/lib/stellar.ts`:
+```typescript
+export const RWA_CONTRACT_ID = 'YOUR_DEPLOYED_CONTRACT_ID';
+```
 
-### **Current Testing Approach**
-- **Mock Contract Client**: Simulates all blockchain interactions
-- **Test Data**: Realistic asset metadata and user balances
-- **Validation Testing**: Address format and compliance checking
-- **Error Simulation**: Network failures and edge cases
-
-### **Planned Testing Implementation**
-- [ ] Unit tests for utilities and components
-- [ ] Integration tests for wallet and contract flows
-- [ ] End-to-end tests for critical user journeys
-- [ ] Smart contract integration testing
-- [ ] Performance testing and optimization
-
----
-
-## 📈 **Asset Types Supported**
-
-### **🏢 Real Estate**
-- **Minimum Value**: $100,000
-- **Examples**: Apartment buildings, office complexes, retail spaces
-- **Current**: Luxury Apartment NYC (LAPT) - $2.5M Manhattan property
-
-### **🏅 Commodities**
-- **Minimum Value**: $50,000
-- **Examples**: Gold storage, oil reserves, agricultural products
-- **Planned**: Gold Storage Facility (Delaware) - $3M precious metals facility
-
-### **⚡ Infrastructure**
-- **Minimum Value**: $500,000
-- **Examples**: Solar farms, data centers, transportation hubs
-- **Planned**: Renewable Energy Farm (Texas) - $8M solar project
+### **Verification**
+- Check deployment on [Stellar Testnet Explorer](https://stellar.expert/explorer/testnet)
+- View detailed deployment guide: `STELLAR_DEPLOYMENT_GUIDE.md`
 
 ---
 
-## 🚨 **Known Limitations**
+## 🚀 **Current Deployment Status & Next Steps**
 
-### **Current Development Constraints**
-- **Simulated Compliance**: Recipient validation is mocked for development
-- **Static Asset Data**: Metadata and balances are not live from blockchain
-- **Network Warnings**: Stellar SDK warnings in web environment (expected)
-- **Manual Network Switching**: Users must switch networks in Freighter manually
+### **✅ Completed**
+- ✅ Real contract client implementation (replaced mock system)
+- ✅ Freighter wallet integration with real blockchain transactions
+- ✅ Stellar SDK integration with proper RPC configuration
+- ✅ Error handling and fallback systems for network issues
+- ✅ Deployment scripts and documentation ready
 
-### **Production Readiness Checklist**
-- [ ] Connect to live smart contracts
-- [ ] Implement real compliance verification
-- [ ] Add comprehensive error handling
-- [ ] Implement proper testing suite
-- [ ] Security audit and penetration testing
-- [ ] Legal compliance review
+### **🔄 Current Status: Ready for Contract Deployment**
+
+The platform is now configured to use real Stellar blockchain transactions. The only step remaining is to deploy the Soroban smart contract to testnet and update the frontend configuration.
+
+### **⚡ Quick Deployment Guide**
+
+#### **Step 1: Check Prerequisites**
+```powershell
+# Check if Visual Studio Build Tools are installed
+.\check-build-tools.ps1
+```
+
+#### **Step 2: Install Visual Studio Build Tools (if needed)**
+If the check shows missing build tools:
+1. Download from: https://visualstudio.microsoft.com/downloads/
+2. Select "Build Tools for Visual Studio 2022"
+3. During installation, select:
+   - ✅ **C++ build tools**
+   - ✅ **Windows 10/11 SDK** 
+   - ✅ **MSVC v143 compiler toolset**
+4. Restart your terminal after installation
+
+#### **Step 3: Deploy Contract to Stellar Testnet**
+```powershell
+# Run the simplified deployment script
+.\deploy-contract-simple.ps1
+
+# The script will:
+# - Install Soroban CLI if needed
+# - Generate Stellar keypair
+# - Fund testnet account
+# - Build and deploy contract
+# - Save contract ID to CONTRACT_ID.txt
+```
+
+#### **Step 4: Update Frontend Configuration**
+After successful deployment, the script will show you the contract ID. Update it in:
+
+**File:** `rwa-frontend/lib/stellar.ts`
+```typescript
+// Replace this line:
+export const RWA_CONTRACT_ID = 'CBQAAC4EHNMMHEI2W3QU6UQ5N4KSVYRLVTB5M2XMARCNS4CNLWMX3VQ6';
+
+// With your deployed contract ID:
+export const RWA_CONTRACT_ID = 'YOUR_DEPLOYED_CONTRACT_ID_HERE';
+```
+
+#### **Step 5: Test Real Transfers**
+1. Start the frontend: `cd rwa-frontend && npm run dev`
+2. Connect Freighter wallet
+3. Switch to Stellar Testnet in Freighter
+4. Navigate to Transfer page (`/transfer`)
+5. Test sending farm tokens to another address
+
+### **🔧 Troubleshooting**
+
+#### **Build Tools Issues**
+```powershell
+# Error: linker `link.exe` not found
+# Solution: Install Visual Studio Build Tools with C++ workload
+
+# Check installation
+.\check-build-tools.ps1
+
+# Alternative: Use Visual Studio Community
+# Install with "Desktop development with C++" workload
+```
+
+#### **Soroban CLI Issues**
+```powershell
+# Error: soroban command not found
+# Solution: Install manually
+cargo install --locked soroban-cli
+
+# Add to PATH if needed
+# C:\Users\{username}\.cargo\bin
+```
+
+#### **Contract Deployment Issues**
+```powershell
+# Error: RPC timeout or network issues
+# Solution: Wait and retry, testnet can be slow
+
+# Check contract status on Stellar Explorer:
+# https://stellar.expert/explorer/testnet/contract/YOUR_CONTRACT_ID
+```
+
+### **📋 Development vs Production**
+
+| Environment | Contract | Network | Purpose |
+|-------------|----------|---------|---------|
+| **Development** | Mock Client | Local | UI development and testing |
+| **Testing** | Real Contract | Testnet | Integration testing |
+| **Production** | Real Contract | Mainnet | Live application |
+
+### **🎯 Next Steps After Deployment**
+
+1. **✅ Contract Deployed** - Real Soroban contract on Stellar testnet
+2. **🔄 Test Transfers** - Verify farm token transfers work end-to-end  
+3. **🔄 Admin Functions** - Test minting, pausing, and administrative operations
+4. **🔄 UI Polish** - Enhance transfer confirmations and error messages
+5. **🔄 Production Deployment** - Deploy to mainnet for live use
+
+### **💡 Alternative: Skip Contract Deployment**
+
+If you want to test the UI without deploying:
+- The platform includes a fallback system
+- It will use `DevelopmentContractClient` if contract deployment fails
+- All UI features work with simulated data
+- Perfect for frontend development and testing
 
 ---
 
-## 🤝 **Contributing**
+## 📞 **Support & Issues**
 
-We welcome contributions to the RWA Investment Platform! Here's how to get started:
+If you encounter issues during deployment:
 
-### **Development Workflow**
+1. **Check Prerequisites**: Run `.\check-build-tools.ps1`
+2. **Review Logs**: Deployment script provides detailed error messages
+3. **Try Manual Steps**: Follow `STELLAR_DEPLOYMENT_GUIDE.md` for step-by-step deployment
+4. **Network Issues**: Stellar testnet can be slow, retry after a few minutes
+5. **Open Issue**: Report problems with full error logs
 
-1. **Fork the repository**
-2. **Create feature branch**: `git checkout -b feature/amazing-feature`
-3. **Follow code style**: Use existing TypeScript and component patterns
-4. **Test thoroughly**: Ensure no regressions in existing functionality
-5. **Submit pull request**: Include clear description of changes
-
-### **Code Style Guidelines**
-
-- **TypeScript**: Strict mode with comprehensive type definitions
-- **Components**: Functional components with proper prop typing
-- **Styling**: Tailwind CSS classes with shadcn/ui patterns
-- **State Management**: Zustand stores with typed interfaces
-- **Naming**: Descriptive variable and function names
-
-### **Contribution Areas**
-
-- 🐛 **Bug Fixes**: Address issues and improve stability
-- ✨ **New Features**: Implement roadmap items or propose new functionality
-- 📚 **Documentation**: Improve guides and API documentation
-- 🎨 **UI/UX**: Enhance design and user experience
-- 🔧 **Performance**: Optimize loading times and responsiveness
-
----
-
-## 📚 **Resources**
-
-### **Documentation**
-- [Stellar Documentation](https://developers.stellar.org/)
-- [Freighter Wallet](https://freighter.app/)
-- [Next.js Documentation](https://nextjs.org/docs)
-- [shadcn/ui Components](https://ui.shadcn.com/)
-- [Tailwind CSS](https://tailwindcss.com/docs)
-
-### **Community**
-- [Stellar Discord](https://discord.gg/stellar)
-- [Next.js Discord](https://discord.gg/nextjs)
-- [GitHub Issues](link-to-issues)
-
----
-
-## 📄 **License**
-
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
-
----
-
-## 🙏 **Acknowledgments**
-
-- **Stellar Development Foundation** for blockchain infrastructure
-- **shadcn** for exceptional UI component library
-- **Vercel** for Next.js framework and deployment platform
-- **Tailwind Labs** for utility-first CSS framework
-
----
-
-## 📞 **Support**
-
-### **Getting Help**
-- 📖 **Documentation**: Check this README and inline code comments
-- 🐛 **Issues**: Report bugs via GitHub Issues
-- 💬 **Community**: Join our Discord for discussions
-- 📧 **Direct Contact**: [Your contact information]
-
-### **Common Issues**
-
-| Issue | Solution |
-|-------|----------|
-| Wallet not connecting | Ensure Freighter extension is installed and enabled |
-| Build warnings | Stellar SDK warnings are expected in web environments |
-| Network switching | Manually switch networks in Freighter extension |
-| Transaction failures | Check address format and compliance status |
+**Contract Status**: Ready for deployment ✅  
+**Frontend Status**: Configured for real transactions ✅  
+**Prerequisites**: Visual Studio Build Tools required 🔧
 
 ---
 
