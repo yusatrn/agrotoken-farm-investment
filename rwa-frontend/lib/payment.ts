@@ -244,12 +244,14 @@ export class PaymentProcessor {
         : 'GAHK7EEG2WWHVKDNT4CEQFZGKF2LGDSW2IVM4S5DP42RBW3K6BTODB4A'; // Replace with mainnet treasury
 
       console.log(`🏦 Treasury address: ${treasuryAddress}`);
-      console.log(`🌐 Network: ${this.network}`);
-
-      // Validate treasury address format using Stellar SDK
+      console.log(`🌐 Network: ${this.network}`);      // Validate treasury address format using Stellar SDK
       if (!StrKey.isValidEd25519PublicKey(treasuryAddress)) {
-        throw new Error(`Invalid treasury address format: ${treasuryAddress}`);
+        const errorMsg = `Invalid treasury address format: ${treasuryAddress} (length: ${treasuryAddress.length}, starts with G: ${treasuryAddress.startsWith('G')})`;
+        console.error('❌ Treasury Address Validation Failed:', errorMsg);
+        throw new Error(errorMsg);
       }
+
+      console.log(`✅ Treasury address validation passed: ${treasuryAddress}`);
 
       // Create asset
       const asset = currency.issuer 
@@ -275,10 +277,14 @@ export class PaymentProcessor {
       // Validate payment parameters
       if (!stellarAmount || parseFloat(stellarAmount) <= 0) {
         throw new Error(`Invalid payment amount: ${stellarAmount}`);
-      }
-        // Create payment operation with error handling
+      }      // Create payment operation with error handling
       let paymentOp;
       try {
+        console.log(`📝 Creating payment operation with parameters:`);
+        console.log(`   - Destination: ${treasuryAddress}`);
+        console.log(`   - Asset: ${asset.code} (Native: ${asset.isNative()})`);
+        console.log(`   - Amount: ${stellarAmount}`);
+        
         paymentOp = Operation.payment({
           destination: treasuryAddress,
           asset: asset,
@@ -287,6 +293,11 @@ export class PaymentProcessor {
         console.log(`✅ Payment operation created successfully`);
       } catch (opError) {
         console.error('❌ Failed to create payment operation:', opError);
+        console.error('❌ Operation parameters were:', {
+          destination: treasuryAddress,
+          asset: asset,
+          amount: stellarAmount
+        });
         const errorMessage = opError instanceof Error ? opError.message : String(opError);
         throw new Error(`Failed to create payment operation: ${errorMessage}`);
       }

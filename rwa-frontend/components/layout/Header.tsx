@@ -112,12 +112,17 @@ export function Header() {
               className="text-sm font-medium transition-colors hover:text-primary"
             >
               Share Transfer
-            </Link>
-            <Link 
+            </Link>            <Link 
               href="/debug" 
               className="text-xs font-mono text-muted-foreground transition-colors hover:text-primary"
             >
               Debug
+            </Link>
+            <Link 
+              href="/diagnostics" 
+              className="text-xs font-mono text-muted-foreground transition-colors hover:text-primary"
+            >
+              🔬 Diagnostics
             </Link>
           </nav>
         </div>
