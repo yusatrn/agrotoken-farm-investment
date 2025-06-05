@@ -182,9 +182,10 @@ export default function DiagnosticsPage() {
           <li>• If treasury address validation fails, check the address format and length</li>
           <li>• If Freighter shows as unavailable, make sure the browser extension is installed</li>
           <li>• If Stellar SDK operations fail, check for import or network issues</li>
-          <li>• Payment failures often relate to insufficient XLM balance or invalid addresses</li>
-        </ul>
+          <li>• Payment failures often relate to insufficient XLM balance or invalid addresses</li>        </ul>
       </div>
     </div>
   );
 }
+
+export default DiagnosticsPage;

@@ -117,12 +117,22 @@ export function Header() {
               className="text-xs font-mono text-muted-foreground transition-colors hover:text-primary"
             >
               Debug
-            </Link>
-            <Link 
+            </Link>            <Link 
               href="/diagnostics" 
               className="text-xs font-mono text-muted-foreground transition-colors hover:text-primary"
             >
               🔬 Diagnostics
+            </Link>            <Link 
+              href="/payment-debug" 
+              className="text-xs font-mono text-muted-foreground transition-colors hover:text-primary"
+            >
+              🔧 Payment Debug
+            </Link>
+            <Link 
+              href="/address-test" 
+              className="text-xs font-mono text-muted-foreground transition-colors hover:text-primary"
+            >
+              🎯 Address Test
             </Link>
           </nav>
         </div>
