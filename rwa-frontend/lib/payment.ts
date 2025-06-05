@@ -206,19 +206,36 @@ export class PaymentProcessor {
               farmTokens,
               note: 'Payment successful! Your XLM has been received. To complete token minting, please contact support to get your address whitelisted. Once whitelisted, your farm tokens will be automatically minted to your wallet.'
             };
-          }
-            // User is whitelisted, proceed with token minting
+          }          // User is whitelisted, proceed with token minting
           console.log(`✅ User ${userAddress} is whitelisted. Proceeding with token minting...`);
-          await contractClient.mint(userAddress, farmTokens);
-          console.log(`✅ Investment successful! Minted ${farmTokens} ${investmentPackage.farmTokenSymbol} tokens`);
+          console.log(`🏢 Using multi-layered auto-minting approach to mint ${farmTokens} tokens...`);
           
-          // Return success with transaction details
-          return {
-            success: true,
-            transactionHash,
-            farmTokens,
-            note: `Successfully minted ${farmTokens} ${investmentPackage.farmTokenSymbol} tokens to your address.`
-          };
+          try {
+            // Try the automatic minting process with all its fallbacks
+            await contractClient.mint(userAddress, farmTokens);
+            console.log(`✅ Investment successful! Minted ${farmTokens} ${investmentPackage.farmTokenSymbol} tokens`);
+            
+            // Return success with transaction details
+            return {
+              success: true,
+              transactionHash,
+              farmTokens,
+              note: `Successfully minted ${farmTokens} ${investmentPackage.farmTokenSymbol} tokens to your address.`
+            };
+          } catch (mintError: any) {
+            // Check if it's a "tokens will be delivered shortly" message, which is actually a success indication
+            if (mintError?.message && mintError.message.includes('will be delivered shortly')) {
+              return {
+                success: true,
+                transactionHash,
+                farmTokens,
+                note: `Payment processed successfully! ${farmTokens} ${investmentPackage.farmTokenSymbol} tokens are being minted and will appear in your wallet shortly.`
+              };
+            }
+            
+            // Re-throw for other types of errors
+            throw mintError;
+          }
         } catch (mintError: any) {
           console.warn('Payment successful but token minting failed:', mintError);
             // Check if it's a whitelist issue specifically
