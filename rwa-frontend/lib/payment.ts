@@ -156,13 +156,17 @@ export class PaymentProcessor {
         package: packageId,
         amount: paymentAmount,
         currency: paymentCurrency
-      });
-
-      // Check wallet connection
+      });      // Check wallet connection
+      console.log('🔍 Checking Freighter wallet connection...');
+      
       const connectionResult = await isConnected();
+      console.log('Connection result:', connectionResult);
+      
       if (!connectionResult.isConnected) {
-        throw new Error('Please connect your Freighter wallet');
+        throw new Error('Please connect your Freighter wallet first');
       }
+      
+      console.log('✅ Freighter wallet is connected');
 
       // Get investment package
       const investmentPackage = INVESTMENT_PACKAGES.find(p => p.id === packageId);
@@ -226,40 +230,40 @@ export class PaymentProcessor {
     try {
       console.log(`💸 Creating real Stellar payment transaction:`);
       console.log(`  From: ${fromAddress}`);
-      console.log(`  Amount: ${amount} ${currencyCode}`);
-
-      // Import additional required modules
-      const { 
-        Server, 
-        TransactionBuilder, 
-        Operation, 
-        Networks, 
-        BASE_FEE 
-      } = await import('@stellar/stellar-sdk');
-
-      // Create Stellar server
-      const server = new Server(this.serverUrl);
+      console.log(`  Amount: ${amount} ${currencyCode}`);      // Create Horizon server
+      const server = new Horizon.Server(this.serverUrl);
       
       // Platform treasury address (where investments go)
-      const treasuryAddress = 'GDREASURYADDRESSEXAMPLEXXXXXXXXXXXXXXXXXXXXXXXXX';
+      // TODO: Replace with your actual treasury address when deploying to production
+      const treasuryAddress = this.network === 'testnet' 
+        ? 'GCKFBEIYTKP3JH7R7AL6LRMJHHJMG7VKMRMJ7N7ZDOEJF4VDCFLQV3CC' // Testnet treasury
+        : 'GDREASURYADDRESSEXAMPLEXXXXXXXXXXXXXXXXXXXXXXXXX'; // Replace with mainnet treasury
 
       // Create asset
       const asset = currency.issuer 
         ? new Asset(currency.code, currency.issuer)
-        : Asset.native(); // XLM
-
-      console.log(`📡 Loading account ${fromAddress}...`);
+        : Asset.native(); // XLM      console.log(`📡 Loading account ${fromAddress}...`);
       
       // Load the sender's account
-      const account = await server.loadAccount(fromAddress);
+      let account;
+      try {
+        account = await server.loadAccount(fromAddress);
+        console.log(`✅ Account loaded successfully. Sequence: ${account.sequenceNumber()}`);
+      } catch (accountError) {
+        console.error('❌ Failed to load account:', accountError);
+        throw new Error('Account not found or not funded. Please ensure your account has XLM for fees.');
+      }
+        console.log(`💰 Creating payment operation: ${amount} ${currencyCode}`);
       
-      console.log(`💰 Creating payment operation: ${amount} ${currencyCode}`);
+      // Convert amount to Stellar format (7 decimal places) if needed
+      // For display format amounts like "100.00", we can use them directly for Stellar
+      const stellarAmount = amount;
       
       // Create payment operation
       const paymentOp = Operation.payment({
         destination: treasuryAddress,
         asset: asset,
-        amount: amount
+        amount: stellarAmount
       });
 
       // Build transaction
@@ -268,16 +272,12 @@ export class PaymentProcessor {
         networkPassphrase: this.network === 'mainnet' ? Networks.PUBLIC : Networks.TESTNET,
       })
         .addOperation(paymentOp)
-        .addMemo(
-          // Add memo for tracking investment
-          this.network === 'mainnet' 
-            ? new (await import('@stellar/stellar-sdk')).Memo.text(`AgroToken Investment`)
-            : new (await import('@stellar/stellar-sdk')).Memo.text(`AgroToken Test Investment`)
-        )
+        .addMemo(Memo.text(`AgroToken Investment`))
         .setTimeout(300)
-        .build();
-
-      console.log(`🔐 Requesting Freighter signature...`);
+        .build();      console.log(`🔐 Requesting Freighter signature...`);
+      console.log(`   Transaction XDR: ${transaction.toXDR()}`);
+      console.log(`   Network: ${this.network}`);
+      console.log(`   Network Passphrase: ${this.network === 'mainnet' ? Networks.PUBLIC : Networks.TESTNET}`);
       
       // Sign with Freighter
       const signedXdr = await signTransaction(transaction.toXDR(), {
