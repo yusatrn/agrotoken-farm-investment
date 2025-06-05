@@ -143,14 +143,13 @@ export class PaymentProcessor {
 
     return { farmTokens, exchangeRate };
   }
-
   // Process investment payment
   async processInvestmentPayment(
     userAddress: string,
     packageId: string,
     paymentAmount: string,
     paymentCurrency: string
-  ): Promise<{ success: boolean; transactionHash?: string; farmTokens?: string }> {
+  ): Promise<{ success: boolean; transactionHash?: string; farmTokens?: string; note?: string }> {
     try {
       console.log(`💰 Processing investment payment:`, {
         user: userAddress,
@@ -190,18 +189,48 @@ export class PaymentProcessor {
         userAddress,
         paymentAmount,
         paymentCurrency
-      );
-
-      // Mint farm tokens to user (using our contract)
+      );      // Mint farm tokens to user (using our contract)
       if (transactionHash) {
         const contractClient = createContractClient();
         
         try {
+          // Check if user is whitelisted first
+          const isWhitelisted = await contractClient.isWhitelisted(userAddress);
+            if (!isWhitelisted) {
+            console.log(`📝 User ${userAddress} not whitelisted for token minting`);
+            
+            // Return success with instructions for whitelisting
+            return {
+              success: true,
+              transactionHash,
+              farmTokens,
+              note: 'Payment successful! Your XLM has been received. To complete token minting, please contact support to get your address whitelisted. Once whitelisted, your farm tokens will be automatically minted to your wallet.'
+            };
+          }
+          
+          // User is whitelisted, proceed with token minting
+          console.log(`✅ User ${userAddress} is whitelisted. Proceeding with token minting...`);
           await contractClient.mint(userAddress, farmTokens);
-          console.log(`✅ Investment successful! Minted ${farmTokens} ${investmentPackage.farmTokenSymbol} tokens`);
-        } catch (mintError) {
+          console.log(`✅ Investment successful! Minted ${farmTokens} ${investmentPackage.farmTokenSymbol} tokens`);        } catch (mintError: any) {
           console.warn('Payment successful but token minting failed:', mintError);
-          // Payment went through, but token minting failed - manual intervention needed
+          
+          // Check if it's a whitelist issue specifically
+          if (mintError?.message && mintError.message.includes('whitelisted')) {
+            return {
+              success: true,
+              transactionHash,
+              farmTokens,
+              note: 'Payment successful. User needs to be whitelisted by contract admin to receive tokens.'
+            };
+          }
+          
+          // Other minting errors - payment still went through
+          return {
+            success: true,
+            transactionHash,
+            farmTokens,
+            note: 'Payment successful but automatic token minting failed. Manual intervention required.'
+          };
         }
       }
 

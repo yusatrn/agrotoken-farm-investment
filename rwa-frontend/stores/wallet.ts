@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import { WalletState } from '@/lib/types';
 import {
   isConnected,
@@ -32,18 +33,20 @@ interface WalletStore extends WalletState {
 // Wallet watcher instance
 let walletWatcher: WatchWalletChanges | null = null;
 
-export const useWalletStore = create<WalletStore>((set, get) => ({
-  // Initial state
-  isConnected: false,
-  address: null,
-  publicKey: null,
-  balance: '0',
-  network: 'testnet',
-  isLoading: false,
-  error: null,
+export const useWalletStore = create<WalletStore>()(
+  persist(
+    (set, get) => ({
+      // Initial state
+      isConnected: false,
+      address: null,
+      publicKey: null,
+      balance: '0',
+      network: 'testnet',
+      isLoading: false,
+      error: null,
 
-  // Clear error state
-  clearError: () => set({ error: null }),  // Connect to Freighter wallet
+      // Clear error state
+      clearError: () => set({ error: null }),// Connect to Freighter wallet
   connect: async () => {
     set({ isLoading: true, error: null });
     
@@ -141,13 +144,17 @@ export const useWalletStore = create<WalletStore>((set, get) => ({
       });
     }
   },
-
   // Disconnect wallet
   disconnect: () => {
     // Stop watching for changes
     if (walletWatcher) {
       walletWatcher.stop();
       walletWatcher = null;
+    }
+
+    // Clear the persisted state from localStorage
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('wallet-storage');
     }
 
     set({
@@ -157,7 +164,7 @@ export const useWalletStore = create<WalletStore>((set, get) => ({
       balance: '0',
       error: null
     });
-    console.log('Wallet disconnected');
+    console.log('Wallet disconnected and localStorage cleared');
   },
 
   // Switch network (Note: This requires user to manually switch in Freighter)
@@ -247,42 +254,69 @@ export const useWalletStore = create<WalletStore>((set, get) => ({
         return;
       }
 
-      // Use API-based detection instead of window object checking
-      console.log('Checking connection via Freighter API...');
-      const isAvailable = await isFreighterAvailableViaAPI();
+      console.log('🔍 Checking wallet connection...');
+      const { isConnected: storeConnected, address: storeAddress } = get();
       
-      if (!isAvailable) {
-        console.log('Freighter not available during connection check');
-        get().disconnect();
-        return;
-      }
-
-      // Check if Freighter is still connected
-      const connectionResult = await isConnected();
-      
-      if (connectionResult.error || !connectionResult.isConnected) {
-        get().disconnect();
-        return;
-      }
-
-      // If we think we're connected but don't have an address, try to get it
-      const { isConnected: storeConnected, address } = get();
-      if (storeConnected && !address) {
-        const addressResult = await getAddress();
-        if (addressResult.error || !addressResult.address) {
+      // If we have persisted connection data, verify it's still valid
+      if (storeConnected && storeAddress) {
+        console.log('📱 Found persisted wallet data, validating...');
+        
+        // Use API-based detection instead of window object checking
+        const isAvailable = await isFreighterAvailableViaAPI();
+        
+        if (!isAvailable) {
+          console.log('❌ Freighter not available during connection check');
           get().disconnect();
           return;
         }
+
+        // Check if Freighter is still connected to the same address
+        const connectionResult = await isConnected();
         
-        set({ 
-          address: addressResult.address, 
-          publicKey: addressResult.address 
-        });
+        if (connectionResult.error || !connectionResult.isConnected) {
+          console.log('❌ Freighter not connected, clearing persisted data');
+          get().disconnect();
+          return;
+        }
+
+        // Verify the address matches
+        const addressResult = await getAddress();
+        if (addressResult.error || !addressResult.address) {
+          console.log('❌ Could not get address from Freighter');
+          get().disconnect();
+          return;
+        }
+
+        if (addressResult.address !== storeAddress) {
+          console.log('🔄 Address changed, updating store');
+          set({ 
+            address: addressResult.address, 
+            publicKey: addressResult.address 
+          });
+        }
+
+        // Refresh balance for the validated connection
+        await get().refreshBalance();
+        console.log('✅ Wallet connection validated and restored');
+        return;
+      }
+
+      // No persisted data, check if user has wallet connected but we missed it
+      const isAvailable = await isFreighterAvailableViaAPI();
+      
+      if (!isAvailable) {
+        return;
+      }
+
+      const connectionResult = await isConnected();
+      
+      if (connectionResult.isConnected) {
+        console.log('🔗 Found active Freighter connection, connecting...');
+        await get().connect();
       }
       
-      console.log('Connection check completed successfully');
     } catch (error) {
-      console.error('Connection check failed:', error);
+      console.error('❌ Connection check failed:', error);
       get().disconnect();
     }
   },
@@ -294,8 +328,7 @@ export const useWalletStore = create<WalletStore>((set, get) => ({
     }
 
     walletWatcher = new WatchWalletChanges(3000); // Check every 3 seconds
-    
-    walletWatcher.watch((changes) => {
+      walletWatcher.watch((changes) => {
       const { address: currentAddress, network: currentNetwork } = get();
       
       // Check if address changed
@@ -320,4 +353,16 @@ export const useWalletStore = create<WalletStore>((set, get) => ({
       }
     });
   }
-})); 
+    }),
+    {
+      name: 'wallet-storage', // localStorage key
+      partialize: (state) => ({
+        // Only persist these fields
+        isConnected: state.isConnected,
+        address: state.address,
+        publicKey: state.publicKey,
+        network: state.network,
+      }),
+    }
+  )
+)); 

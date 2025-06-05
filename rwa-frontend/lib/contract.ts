@@ -369,14 +369,43 @@ class RealContractClient implements ContractMethods {
       return false;
     }
   }
-
   async getAdmin(): Promise<string> {
     try {
       console.log(`Getting admin address for contract ${this.contractId}`);
+      
+      // Check RPC health first
+      const isHealthy = await this.checkRpcHealth();
+      if (!isHealthy) {
+        console.warn('RPC not healthy, returning mock admin for development');
+        return 'GADMIN...EXAMPLE'; // Mock admin address
+      }
+      
+      const contract = new Contract(this.contractId);
+      const sourceKeypair = Keypair.random();
+      const sourceAccount = new Account(sourceKeypair.publicKey(), '0');
+      
+      const transaction = new TransactionBuilder(sourceAccount, {
+        fee: BASE_FEE,
+        networkPassphrase: this.getNetworkPassphrase(),
+      })
+        .addOperation(contract.call('get_admin'))
+        .setTimeout(300)
+        .build();
+
+      const simulationResult = await this.server.simulateTransaction(transaction);
+      
+      if (rpc.Api.isSimulationSuccess(simulationResult) && simulationResult.result?.retval) {
+        const adminScVal = simulationResult.result.retval;
+        const adminAddress = Address.fromScVal(adminScVal).toString();
+        console.log(`Contract admin address: ${adminAddress}`);
+        return adminAddress;
+      }
+
+      console.warn('Could not get admin from contract, using mock');
       return 'GADMIN...EXAMPLE'; // Mock admin address
     } catch (error) {
       console.error('Error getting admin:', error);
-      throw new Error(parseContractError(error));
+      return 'GADMIN...EXAMPLE'; // Mock admin address  
     }
   }
 
@@ -500,7 +529,6 @@ class RealContractClient implements ContractMethods {
       throw new Error(parseContractError(error));
     }
   }
-
   async addCompliance(address: string, compliance: ComplianceData): Promise<boolean> {
     try {
       console.log(`Adding compliance for ${address}:`, compliance);
@@ -516,36 +544,6 @@ class RealContractClient implements ContractMethods {
       return true;
     } catch (error) {
       console.error('Add compliance failed:', error);
-      throw new Error(parseContractError(error));
-    }
-  }
-
-  async addToWhitelist(address: string): Promise<boolean> {
-    try {
-      console.log(`Adding ${address} to whitelist`);
-      
-      const args = [Address.fromString(address).toScVal()];
-      
-      await this.submitContractTransaction('add_to_whitelist', args, address);
-      console.log('Address added to whitelist');
-      return true;
-    } catch (error) {
-      console.error('Add to whitelist failed:', error);
-      throw new Error(parseContractError(error));
-    }
-  }
-
-  async removeFromWhitelist(address: string): Promise<boolean> {
-    try {
-      console.log(`Removing ${address} from whitelist`);
-      
-      const args = [Address.fromString(address).toScVal()];
-      
-      await this.submitContractTransaction('remove_from_whitelist', args, address);
-      console.log('Address removed from whitelist');
-      return true;
-    } catch (error) {
-      console.error('Remove from whitelist failed:', error);
       throw new Error(parseContractError(error));
     }
   }
@@ -577,7 +575,6 @@ class RealContractClient implements ContractMethods {
       throw new Error(parseContractError(error));
     }
   }
-
   async unpause(): Promise<boolean> {
     try {
       console.log(`Unpausing contract ${this.contractId}`);
@@ -587,6 +584,66 @@ class RealContractClient implements ContractMethods {
       return true;
     } catch (error) {
       console.error('Unpause failed:', error);
+      throw new Error(parseContractError(error));
+    }
+  }
+  async addToWhitelist(address: string): Promise<boolean> {
+    try {
+      console.log(`Adding ${address} to whitelist`);
+      
+      // Get the admin address from the contract
+      const adminAddress = await this.getAdmin();
+      console.log(`Using admin address: ${adminAddress}`);
+      
+      const args = [Address.fromString(address).toScVal()];
+      
+      // Use admin address as signer for whitelist operations
+      await this.submitContractTransaction('add_to_whitelist', args, adminAddress);
+      
+      console.log('✅ Address added to whitelist successfully');
+      return true;
+    } catch (error) {
+      console.error('❌ Add to whitelist failed:', error);
+      
+      // Check if it's an admin permission error
+      if (error instanceof Error && (
+        error.message.includes('UnreachableCodeReached') ||
+        error.message.includes('InvalidAction') ||
+        error.message.includes('require_admin')
+      )) {
+        throw new Error('Admin privileges required to modify whitelist. Please contact platform administrator.');
+      }
+      
+      throw new Error(parseContractError(error));
+    }
+  }
+  async removeFromWhitelist(address: string): Promise<boolean> {
+    try {
+      console.log(`Removing ${address} from whitelist`);
+      
+      // Get the admin address from the contract
+      const adminAddress = await this.getAdmin();
+      console.log(`Using admin address: ${adminAddress}`);
+      
+      const args = [Address.fromString(address).toScVal()];
+      
+      // Use admin address as signer for whitelist operations
+      await this.submitContractTransaction('remove_from_whitelist', args, adminAddress);
+      
+      console.log('✅ Address removed from whitelist successfully');
+      return true;
+    } catch (error) {
+      console.error('❌ Remove from whitelist failed:', error);
+      
+      // Check if it's an admin permission error
+      if (error instanceof Error && (
+        error.message.includes('UnreachableCodeReached') ||
+        error.message.includes('InvalidAction') ||
+        error.message.includes('require_admin')
+      )) {
+        throw new Error('Admin privileges required to modify whitelist. Please contact platform administrator.');
+      }
+      
       throw new Error(parseContractError(error));
     }
   }

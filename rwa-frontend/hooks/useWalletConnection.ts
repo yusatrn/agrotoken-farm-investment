@@ -7,6 +7,7 @@ import { detectFreighterViaAPI, isFreighterAvailableViaAPI } from '@/lib/freight
 
 export function useWalletConnection() {
   const [isInitialized, setIsInitialized] = useState(false);
+  const [isRestoring, setIsRestoring] = useState(false);
   
   const { 
     isConnected, 
@@ -25,13 +26,16 @@ export function useWalletConnection() {
   useEffect(() => {
     const initializeWallet = async () => {
       if (!isInitialized && typeof window !== 'undefined') {
+        setIsRestoring(true);
+        console.log('🔄 Initializing wallet connection...');
         await checkConnection();
+        setIsRestoring(false);
         setIsInitialized(true);
       }
     };
 
     initializeWallet();
-  }, [checkConnection, isInitialized]);  // Handle wallet connection with user feedback
+  }, [checkConnection, isInitialized]);// Handle wallet connection with user feedback
   const handleConnect = async () => {
     clearError();
     
@@ -119,6 +123,7 @@ export function useWalletConnection() {
     balance,
     network,
     isLoading,
+    isRestoring,
     error,
     isInitialized,
     

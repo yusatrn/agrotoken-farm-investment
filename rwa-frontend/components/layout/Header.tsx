@@ -133,6 +133,22 @@ export function Header() {
               className="text-xs font-mono text-muted-foreground transition-colors hover:text-primary"
             >
               🎯 Address Test
+            </Link>            <Link 
+              href="/payment-validation" 
+              className="text-xs font-mono text-muted-foreground transition-colors hover:text-primary"
+            >
+              🧪 Payment Validation
+            </Link>            <Link 
+              href="/production-test" 
+              className="text-xs font-mono text-muted-foreground transition-colors hover:text-primary"
+            >
+              🚀 Production Test
+            </Link>
+            <Link 
+              href="/platform-status" 
+              className="text-xs font-mono text-muted-foreground transition-colors hover:text-primary"
+            >
+              📊 Platform Status
             </Link>
           </nav>
         </div>

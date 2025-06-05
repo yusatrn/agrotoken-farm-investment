@@ -44,12 +44,11 @@ export default function AddressTestPage() {
 
     try {
       const paymentProcessor = new PaymentProcessor('testnet');
-      
-      // Try to process a small investment payment (this will test the treasury address)
+        // Try to process an investment payment (using minimum amount)
       const result = await paymentProcessor.processInvestmentPayment(
         userAddress,
         'organic-farm-basic', // Package ID
-        '0.1', // Small amount for testing
+        '10', // Minimum amount for testing (10 XLM)
         'XLM'
       );
 

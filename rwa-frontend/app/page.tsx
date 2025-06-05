@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useWalletStore } from '@/stores/wallet';
+import { useWalletConnection } from '@/hooks/useWalletConnection';
 import { useContractStore } from '@/stores/contract';
 import { Header } from '@/components/layout/Header';
 import { Button } from '@/components/ui/button';
@@ -12,13 +12,19 @@ import {
   ArrowRight,
   CheckCircle,
   AlertCircle,
-  Clock
+  Clock,
+  Loader2
 } from 'lucide-react';
 import { formatTokenAmount, formatCurrency } from '@/lib/stellar';
 import Link from 'next/link';
 
 export default function Dashboard() {
-  const { isConnected, address, checkConnection } = useWalletStore();  const { 
+  const { 
+    isConnected, 
+    address, 
+    isRestoring, 
+    isInitialized 
+  } = useWalletConnection();  const { 
     assetMetadata, 
     userBalance, 
     isWhitelisted, 
@@ -27,11 +33,10 @@ export default function Dashboard() {
     fetchUserData 
   } = useContractStore();
 
-  // Check wallet connection and fetch data on mount
+  // Fetch contract data on mount
   useEffect(() => {
-    checkConnection();
     fetchContractData();
-  }, [checkConnection, fetchContractData]);
+  }, [fetchContractData]);
 
   // Fetch user data when wallet connects
   useEffect(() => {
@@ -39,6 +44,25 @@ export default function Dashboard() {
       fetchUserData(address);
     }
   }, [isConnected, address, fetchUserData]);
+
+  // Show loading state while wallet is being restored
+  if (isRestoring || !isInitialized) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <main className="container mx-auto px-4 py-8">
+          <div className="flex flex-col items-center justify-center min-h-[calc(100vh-120px)] space-y-8">
+            <div className="text-center space-y-4">
+              <Loader2 className="h-8 w-8 animate-spin mx-auto" />
+              <h2 className="text-xl font-semibold">Restoring wallet connection...</h2>
+              <p className="text-muted-foreground">Please wait while we check your wallet status</p>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
   if (!isConnected) {
     return (
       <div className="min-h-screen bg-background">
