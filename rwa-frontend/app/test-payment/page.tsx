@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { isConnected, getPublicKey, signTransaction } from '@stellar/freighter-api';
 import { PaymentProcessor } from '@/lib/payment';
 
 export default function TestPaymentPage() {
@@ -14,19 +13,21 @@ export default function TestPaymentPage() {
     console.log(message);
     setLogs(prev => [...prev, `${new Date().toLocaleTimeString()}: ${message}`]);
   };
-
   const connectWallet = async () => {
     setIsConnecting(true);
     addLog('🔍 Checking Freighter wallet...');
     
     try {
-      const connected = await isConnected();
+      // Dynamic import to avoid SSR issues
+      const freighter = await import('@stellar/freighter-api');
+      
+      const connected = await freighter.isConnected();
       addLog(`Freighter connected: ${connected.isConnected}`);
       
       if (connected.isConnected) {
-        const publicKey = await getPublicKey();
-        setWalletAddress(publicKey);
-        addLog(`✅ Wallet connected: ${publicKey}`);
+        const addressResult = await freighter.getAddress();
+        setWalletAddress(addressResult.address);
+        addLog(`✅ Wallet connected: ${addressResult.address}`);
       } else {
         addLog('❌ Wallet not connected');
       }

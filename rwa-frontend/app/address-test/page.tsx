@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { PaymentProcessor } from '@/lib/payment';
-import { isConnected, getPublicKey } from '@stellar/freighter-api';
 
 export default function AddressTestPage() {
   const [userAddress, setUserAddress] = useState<string>('');
@@ -12,18 +11,19 @@ export default function AddressTestPage() {
   const addLog = (message: string) => {
     console.log(message);
     setLogs(prev => [...prev, `${new Date().toLocaleTimeString()}: ${message}`]);
-  };
-
-  const connectWallet = async () => {
+  };  const connectWallet = async () => {
     setIsConnecting(true);
     addLog('🔍 Connecting to Freighter wallet...');
     
     try {
-      const connected = await isConnected();
+      // Dynamic import to avoid SSR issues
+      const freighter = await import('@stellar/freighter-api');
+      
+      const connected = await freighter.isConnected();
       if (connected.isConnected) {
-        const publicKey = await getPublicKey();
-        setUserAddress(publicKey);
-        addLog(`✅ Connected: ${publicKey}`);
+        const addressResult = await freighter.getAddress();
+        setUserAddress(addressResult.address);
+        addLog(`✅ Connected: ${addressResult.address}`);
       } else {
         addLog('❌ Wallet not connected');
       }
@@ -34,8 +34,8 @@ export default function AddressTestPage() {
     }
   };
 
-  const testSpecificAddress = async (testName: string, address: string) => {
-    addLog(`🧪 Testing ${testName}: ${address}`);
+  const testPaymentFlow = async (testName: string) => {
+    addLog(`🧪 Testing ${testName} with payment processor...`);
     
     if (!userAddress) {
       addLog('❌ Please connect wallet first');
@@ -45,41 +45,37 @@ export default function AddressTestPage() {
     try {
       const paymentProcessor = new PaymentProcessor('testnet');
       
-      // Try to create a payment transaction with this specific address
-      const result = await paymentProcessor.createPaymentTransaction(
+      // Try to process a small investment payment (this will test the treasury address)
+      const result = await paymentProcessor.processInvestmentPayment(
         userAddress,
+        'organic-farm-basic', // Package ID
         '0.1', // Small amount for testing
         'XLM'
       );
 
-      addLog(`✅ ${testName} SUCCESS: Transaction hash ${result}`);
+      if (result.success) {
+        addLog(`✅ ${testName} SUCCESS: Transaction ${result.transactionHash}`);
+        addLog(`🎉 Farm tokens received: ${result.farmTokens}`);
+      } else {
+        addLog(`❌ ${testName} FAILED: Payment unsuccessful`);
+      }
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : String(error);
       addLog(`❌ ${testName} FAILED: ${errorMsg}`);
     }
   };
-
   const runAddressTests = async () => {
     if (!userAddress) {
       addLog('❌ Please connect wallet first');
       return;
     }
 
-    addLog('🚀 Starting comprehensive address tests...');
+    addLog('🚀 Starting comprehensive payment flow tests...');
 
-    // Test current treasury address
-    await testSpecificAddress('Current Treasury', 'GAIH3ULLFQ4DGSECF2AR555KZ4KNDGEKN4AFI4SU2M7B43MGK3QJZNSR');
-    
-    // Test original address that might have been causing issues
-    await testSpecificAddress('Original Treasury', 'GCKFBEIYTKP3JH7R7AL6LRMJHHJMG7VKMRMJ7N7ZDOEJF4VDCFLQV3CC');
-    
-    // Test known good testnet addresses
-    await testSpecificAddress('SDF Testnet', 'GAIH3ULLFQ4DGSECF2AR555KZ4KNDGEKN4AFI4SU2M7B43MGK3QJZNSR');
-    
-    // Test user's own address (should work)
-    await testSpecificAddress('Self Payment', userAddress);
+    // Test the payment flow which will internally test the treasury address
+    await testPaymentFlow('Payment Flow Test');
 
-    addLog('🏁 Address testing complete!');
+    addLog('🏁 Payment flow testing complete!');
   };
 
   const clearLogs = () => {

@@ -187,5 +187,3 @@ export default function DiagnosticsPage() {
     </div>
   );
 }
-
-export default DiagnosticsPage;
