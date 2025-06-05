@@ -18,12 +18,13 @@ import {
   Info,
   CheckCircle,
   ArrowRight,
-  Wallet
+  Wallet,
+  AlertTriangle
 } from 'lucide-react';
 import PaymentProcessor, { INVESTMENT_PACKAGES, PAYMENT_CURRENCIES, formatCurrencyAmount } from '@/lib/payment';
 
 export default function InvestmentPage() {
-  const { address, isConnected } = useWalletStore();
+  const { address, isConnected, connect } = useWalletStore();
   const [selectedPackage, setSelectedPackage] = useState<string>('');
   const [selectedCurrency, setSelectedCurrency] = useState<string>('USDC');
   const [investmentAmount, setInvestmentAmount] = useState<string>('');
@@ -48,15 +49,47 @@ export default function InvestmentPage() {
       console.error('Failed to load portfolio:', error);
     }
   };
-
   const handleInvestment = async () => {
+    console.log('🚀 Investment button clicked!', {
+      isConnected,
+      address,
+      selectedPackage,
+      investmentAmount,
+      selectedCurrency
+    });
+
     if (!isConnected || !address || !selectedPackage || !investmentAmount) {
+      const missing = [];
+      if (!isConnected) missing.push('wallet connection');
+      if (!address) missing.push('wallet address');
+      if (!selectedPackage) missing.push('investment package');
+      if (!investmentAmount) missing.push('investment amount');
+      
+      const message = `Please complete the following: ${missing.join(', ')}`;
+      console.warn('❌ Investment validation failed:', message);
+      alert(message);
       return;
+    }
+
+    // Validate minimum investment
+    const selectedPackageData = INVESTMENT_PACKAGES.find(p => p.id === selectedPackage);
+    if (selectedPackageData) {
+      const minInvestment = selectedPackageData.minimumInvestment[selectedCurrency];
+      const userAmount = parseFloat(investmentAmount);
+      const minAmount = parseFloat(minInvestment);
+      
+      if (userAmount < minAmount) {
+        const message = `Minimum investment is ${minInvestment} ${selectedCurrency}. You entered ${investmentAmount} ${selectedCurrency}.`;
+        console.warn('❌ Investment amount too low:', message);
+        alert(message);
+        return;
+      }
     }
 
     setIsProcessing(true);
     
     try {
+      console.log('💰 Starting payment processing...');
       const result = await paymentProcessor.processInvestmentPayment(
         address,
         selectedPackage,
@@ -64,18 +97,32 @@ export default function InvestmentPage() {
         selectedCurrency
       );
 
+      console.log('💳 Payment result:', result);
+
       if (result.success) {
-        alert(`Investment successful! You received ${result.farmTokens} farm tokens.`);
+        const message = `Investment successful! You received ${result.farmTokens} farm tokens.${result.note ? '\n\nNote: ' + result.note : ''}`;
+        console.log('✅ Investment successful:', result);
+        alert(message);
         await loadPortfolio(); // Refresh portfolio
         setInvestmentAmount('');
       } else {
+        console.error('❌ Investment failed:', result);
         alert('Investment failed. Please try again.');
       }
     } catch (error) {
-      console.error('Investment error:', error);
-      alert('Investment failed: ' + (error as Error).message);
+      console.error('💥 Investment error:', error);
+      alert('Investment failed: ' + (error instanceof Error ? error.message : String(error)));
     } finally {
       setIsProcessing(false);
+    }
+  };
+
+  const handleConnect = async () => {
+    try {
+      await connect();
+    } catch (error) {
+      console.error('Connect error:', error);
+      alert('Failed to connect wallet: ' + (error instanceof Error ? error.message : String(error)));
     }
   };
 
@@ -209,7 +256,7 @@ export default function InvestmentPage() {
                     <p className="text-gray-600 mb-4">
                       Connect your Freighter wallet to start investing
                     </p>
-                    <Button>Connect Wallet</Button>
+                    <Button onClick={handleConnect}>Connect Wallet</Button>
                   </CardContent>
                 </Card>
               ) : (
@@ -307,6 +354,20 @@ export default function InvestmentPage() {
                         technology and smart contracts. All transactions are transparent and verifiable.
                       </AlertDescription>
                     </Alert>
+
+                    {/* Validation Feedback */}
+                    {(!selectedPackage || !investmentAmount) && (
+                      <Alert className="border-yellow-200 bg-yellow-50">
+                        <AlertTriangle className="h-4 w-4 text-yellow-600" />
+                        <AlertDescription className="text-yellow-800">
+                          {!selectedPackage && !investmentAmount 
+                            ? 'Please select an investment package and enter an amount to proceed.'
+                            : !selectedPackage 
+                            ? 'Please select an investment package from the left.'
+                            : 'Please enter an investment amount.'}
+                        </AlertDescription>
+                      </Alert>
+                    )}
 
                     {/* Invest Button */}
                     <Button

@@ -361,8 +361,7 @@ export const useWalletStore = create<WalletStore>()(
         isConnected: state.isConnected,
         address: state.address,
         publicKey: state.publicKey,
-        network: state.network,
-      }),
+        network: state.network,      }),
     }
   )
-)); 
+);

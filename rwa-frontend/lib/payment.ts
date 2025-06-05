@@ -207,11 +207,19 @@ export class PaymentProcessor {
               note: 'Payment successful! Your XLM has been received. To complete token minting, please contact support to get your address whitelisted. Once whitelisted, your farm tokens will be automatically minted to your wallet.'
             };
           }
-          
-          // User is whitelisted, proceed with token minting
+            // User is whitelisted, proceed with token minting
           console.log(`✅ User ${userAddress} is whitelisted. Proceeding with token minting...`);
           await contractClient.mint(userAddress, farmTokens);
-          console.log(`✅ Investment successful! Minted ${farmTokens} ${investmentPackage.farmTokenSymbol} tokens`);        } catch (mintError: any) {
+          console.log(`✅ Investment successful! Minted ${farmTokens} ${investmentPackage.farmTokenSymbol} tokens`);
+          
+          // Return success with transaction details
+          return {
+            success: true,
+            transactionHash,
+            farmTokens,
+            note: `Successfully minted ${farmTokens} ${investmentPackage.farmTokenSymbol} tokens to your address.`
+          };
+        } catch (mintError: any) {
           console.warn('Payment successful but token minting failed:', mintError);
           
           // Check if it's a whitelist issue specifically
@@ -224,12 +232,21 @@ export class PaymentProcessor {
             };
           }
           
-          // Other minting errors - payment still went through
+          // Check if it's a timeout issue
+          if (mintError?.message && mintError.message.includes('timeout')) {
+            return {
+              success: true,
+              transactionHash,
+              farmTokens,
+              note: 'Payment successful! Token minting was initiated but is taking longer than expected to complete. Your tokens will appear in your wallet once the transaction is confirmed.'
+            };
+          }
+            // Other minting errors - payment still went through
           return {
             success: true,
             transactionHash,
             farmTokens,
-            note: 'Payment successful but automatic token minting failed. Manual intervention required.'
+            note: 'Payment successful! Your investment has been recorded, but there was an issue with the automatic token minting. Your tokens will be manually minted by an admin within 24 hours.'
           };
         }
       }

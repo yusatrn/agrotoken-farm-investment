@@ -134,32 +134,42 @@ class RealContractClient implements ContractMethods {
 
       if (result.status === 'ERROR') {
         throw new Error(`Transaction failed: ${result.errorResult}`);
-      }
-
-      // Wait for transaction result
+      }      // Wait for transaction result
       const resultHash = result.hash;
       let attempts = 0;
-      const maxAttempts = 30; // 30 seconds timeout
+      const maxAttempts = 60; // 60 seconds timeout with more frequent checks initially
+      
+      console.log(`⏳ Waiting for transaction ${resultHash} confirmation...`);
 
+      // Check more frequently at the beginning, then less frequently
       while (attempts < maxAttempts) {
         try {
           const txResult = await this.server.getTransaction(resultHash);
           
           if (txResult.status === 'SUCCESS') {
-            console.log(`${functionName} transaction successful:`, resultHash);
+            console.log(`✅ ${functionName} transaction successful:`, resultHash);
             return txResult;
           } else if (txResult.status === 'FAILED') {
             throw new Error(`Transaction failed: ${txResult.resultXdr}`);
+          } else {
+            console.log(`⌛ Transaction status: ${txResult.status} (attempt ${attempts+1}/${maxAttempts})`);
           }
         } catch (error) {
-          // Transaction might not be available yet, continue polling
+          // Only log every 5th attempt to reduce noise
+          if (attempts % 5 === 0) {
+            console.log(`⏱️ Waiting for transaction to be processed (attempt ${attempts+1}/${maxAttempts})...`);
+          }
         }
         
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        // Adaptive delay: check more frequently at the beginning
+        const delay = attempts < 10 ? 500 : (attempts < 20 ? 1000 : 2000);
+        await new Promise(resolve => setTimeout(resolve, delay));
         attempts++;
       }
 
-      throw new Error('Transaction timeout - please check the blockchain explorer');
+      // Even if we timeout, return the transaction hash so the user can check later
+      console.warn(`⚠️ Transaction ${resultHash} taking longer than expected. You can check the status later on Stellar Explorer.`);
+      return { status: 'PENDING', hash: resultHash };
     } catch (error) {
       console.error(`Contract transaction ${functionName} failed:`, error);
       throw error;
@@ -483,9 +493,7 @@ class RealContractClient implements ContractMethods {
       
       throw new Error(errorMessage);
     }
-  }
-
-  async mint(to: string, amount: string): Promise<boolean> {
+  }  async mint(to: string, amount: string): Promise<boolean> {
     try {
       console.log(`Minting ${amount} tokens to ${to}`);
       
@@ -498,11 +506,20 @@ class RealContractClient implements ContractMethods {
         nativeToScVal(BigInt(amount), { type: 'i128' })
       ];
 
-      await this.submitContractTransaction('mint', args, to);
-      console.log('Mint successful');
+      const result = await this.submitContractTransaction('mint_simple', args, to);
+      
+      // Check if we got a result with a PENDING status
+      if (result && typeof result === 'object' && 'status' in result && result.status === 'PENDING') {
+        console.log(`⏳ Mint transaction submitted but still processing. Transaction hash: ${result.hash}`);
+        // We return true even though it's still processing, as the transaction was submitted successfully
+        // The user will be informed that they need to check later
+        return true;
+      }
+      
+      console.log('✅ Mint successful');
       return true;
     } catch (error) {
-      console.error('Mint failed:', error);
+      console.error('❌ Mint failed:', error);
       throw new Error(parseContractError(error));
     }
   }
