@@ -4,13 +4,20 @@ param(
     [string]$UserAddress,
     
     [Parameter(Mandatory=$true)]
-    [string]$TokenAmount
+    [string]$TokenAmount,
+    
+    [Parameter(Mandatory=$false)]
+    [string]$TransactionHash = ""
 )
 
 $AdminKeyPair = "alice"
 $ContractId = "CD22CFPEPDUXEBYLZ3LJA233UI5WRVQNT4UVWDKSOYONACWBQ5JMG5EX"
 
-Write-Host "Minting $TokenAmount tokens to $UserAddress..." -ForegroundColor Cyan
+if ($TransactionHash) {
+    Write-Host "Minting $TokenAmount tokens to $UserAddress for transaction $TransactionHash..." -ForegroundColor Cyan
+} else {
+    Write-Host "Minting $TokenAmount tokens to $UserAddress..." -ForegroundColor Cyan
+}
 
 # Check if user is whitelisted
 $isWhitelisted = soroban contract invoke --source-account $AdminKeyPair --network testnet --id $ContractId -- is_whitelisted --address $UserAddress

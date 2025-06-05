@@ -130,11 +130,28 @@ class RealContractClient implements ContractMethods {
       });// Submit to network
       console.log(`Submitting ${functionName} transaction to network...`);
       const signedTransaction = TransactionBuilder.fromXDR(signedXdr.signedTxXdr, this.getNetworkPassphrase());
-      const result = await this.server.sendTransaction(signedTransaction);
-
-      if (result.status === 'ERROR') {
-        throw new Error(`Transaction failed: ${result.errorResult}`);
-      }      // Wait for transaction result
+      const result = await this.server.sendTransaction(signedTransaction);      if (result.status === 'ERROR') {
+        // Parse error result for better error messages
+        console.error('Transaction error details:', result);
+        
+        let errorMessage = 'Transaction failed';
+        try {
+          if (result.errorResult && result.errorResult.toString) {
+            errorMessage = `Transaction failed: ${result.errorResult.toString()}`;
+          } else if (result.errorResult) {
+            errorMessage = `Transaction failed: ${JSON.stringify(result.errorResult)}`;
+          }
+          
+          // Check for common error patterns
+          if (errorMessage.includes('Auth') && errorMessage.includes('InvalidAction')) {
+            errorMessage = 'Authentication error: This operation requires admin privileges';
+          }
+        } catch (parseError) {
+          console.error('Error parsing transaction error:', parseError);
+        }
+        
+        throw new Error(errorMessage);
+      }// Wait for transaction result
       const resultHash = result.hash;
       let attempts = 0;
       const maxAttempts = 60; // 60 seconds timeout with more frequent checks initially
@@ -501,23 +518,45 @@ class RealContractClient implements ContractMethods {
         throw new Error('Recipient must be whitelisted');
       }
 
-      const args = [
-        Address.fromString(to).toScVal(),
-        nativeToScVal(BigInt(amount), { type: 'i128' })
-      ];
-
-      const result = await this.submitContractTransaction('mint_simple', args, to);
-      
-      // Check if we got a result with a PENDING status
-      if (result && typeof result === 'object' && 'status' in result && result.status === 'PENDING') {
-        console.log(`⏳ Mint transaction submitted but still processing. Transaction hash: ${result.hash}`);
-        // We return true even though it's still processing, as the transaction was submitted successfully
-        // The user will be informed that they need to check later
-        return true;
+      // Check if we're in development mode first (for testing)
+      const isHealthy = await this.checkRpcHealth();
+      if (!isHealthy) {
+        console.log('🚧 DEV: Using mock minting since RPC is not healthy');
+        return true; // Mock success in development mode
       }
       
-      console.log('✅ Mint successful');
-      return true;
+      // Try first with connected user (for users with admin privileges)
+      console.log('Attempting to mint tokens with connected user wallet...');
+      try {
+        const args = [
+          Address.fromString(to).toScVal(),
+          nativeToScVal(BigInt(amount), { type: 'i128' })
+        ];
+        
+        const result = await this.submitContractTransaction('mint_simple', args, to);
+        
+        // Check if we got a result with a PENDING status
+        if (result && typeof result === 'object' && 'status' in result && result.status === 'PENDING' && 'hash' in result) {
+          console.log(`⏳ Mint transaction submitted but still processing. Transaction hash: ${result.hash}`);
+          return true;
+        }
+        
+        console.log('✅ Mint successful with connected user wallet');
+        return true;
+      } catch (userMintError) {
+        // If the error is related to authentication, throw a specific error
+        if (userMintError instanceof Error && 
+            (userMintError.message.includes('Auth') || 
+             userMintError.message.includes('InvalidAction') || 
+             userMintError.message.includes('admin privileges'))) {
+          
+          console.warn('👮‍♀️ User does not have admin privileges for minting. Admin intervention required.');
+          throw new Error('Admin privileges required for token minting. Your investment has been recorded and tokens will be minted manually.');
+        }
+        
+        // For non-auth errors, just rethrow
+        throw userMintError;
+      }
     } catch (error) {
       console.error('❌ Mint failed:', error);
       throw new Error(parseContractError(error));

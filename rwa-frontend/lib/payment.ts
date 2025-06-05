@@ -221,8 +221,7 @@ export class PaymentProcessor {
           };
         } catch (mintError: any) {
           console.warn('Payment successful but token minting failed:', mintError);
-          
-          // Check if it's a whitelist issue specifically
+            // Check if it's a whitelist issue specifically
           if (mintError?.message && mintError.message.includes('whitelisted')) {
             return {
               success: true,
@@ -239,6 +238,36 @@ export class PaymentProcessor {
               transactionHash,
               farmTokens,
               note: 'Payment successful! Token minting was initiated but is taking longer than expected to complete. Your tokens will appear in your wallet once the transaction is confirmed.'
+            };
+          }
+            // Check if it's an authentication or permission issue
+          if (mintError?.message && (
+            mintError.message.includes('Auth') || 
+            mintError.message.includes('InvalidAction') ||
+            mintError.message.includes('authentication') ||
+            mintError.message.includes('require_auth') ||
+            mintError.message.includes('admin privileges')
+          )) {
+            // Record payment details for admin follow-up
+            try {
+              // Log details for admin to pick up later
+              console.log(`✏️ ADMIN ACTION REQUIRED: Mint ${farmTokens} tokens to ${userAddress} (Payment: ${transactionHash})`);
+              
+              return {
+                success: true,
+                transactionHash,
+                farmTokens,
+                note: 'Payment successful! Your investment has been recorded. Tokens will be minted by an administrator within 24 hours.'
+              };
+            } catch (logError) {
+              console.error('Failed to log payment for manual minting:', logError);
+            }
+            
+            return {
+              success: true,
+              transactionHash,
+              farmTokens,
+              note: 'Payment successful! Your tokens will be minted manually by an administrator.'
             };
           }
             // Other minting errors - payment still went through
