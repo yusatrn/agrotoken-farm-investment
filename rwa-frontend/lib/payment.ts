@@ -5,7 +5,8 @@ import {
   Operation,
   Networks,
   BASE_FEE,
-  Memo
+  Memo,
+  StrKey
 } from '@stellar/stellar-sdk';
 import { Horizon } from '@stellar/stellar-sdk';
 import { signTransaction, isConnected } from '@stellar/freighter-api';
@@ -225,19 +226,30 @@ export class PaymentProcessor {
     const currency = PAYMENT_CURRENCIES.find(c => c.code === currencyCode);
     if (!currency) {
       throw new Error(`Unsupported currency: ${currencyCode}`);
-    }
-
-    try {
+    }    try {
       console.log(`💸 Creating real Stellar payment transaction:`);
       console.log(`  From: ${fromAddress}`);
-      console.log(`  Amount: ${amount} ${currencyCode}`);      // Create Horizon server
-      const server = new Horizon.Server(this.serverUrl);
-      
-      // Platform treasury address (where investments go)
-      // TODO: Replace with your actual treasury address when deploying to production
+      console.log(`  Amount: ${amount} ${currencyCode}`);
+
+      // Validate fromAddress format
+      if (!StrKey.isValidEd25519PublicKey(fromAddress)) {
+        throw new Error(`Invalid sender address format: ${fromAddress}`);
+      }
+
+      // Create Horizon server
+      const server = new Horizon.Server(this.serverUrl);// Platform treasury address (where investments go)
+      // Using Stellar Development Foundation testnet friendbot address as a known good address
       const treasuryAddress = this.network === 'testnet' 
-        ? 'GCKFBEIYTKP3JH7R7AL6LRMJHHJMG7VKMRMJ7N7ZDOEJF4VDCFLQV3CC' // Testnet treasury
-        : 'GDREASURYADDRESSEXAMPLEXXXXXXXXXXXXXXXXXXXXXXXXX'; // Replace with mainnet treasury
+        ? 'GAIH3ULLFQ4DGSECF2AR555KZ4KNDGEKN4AFI4SU2M7B43MGK3QJZNSR' // Known good testnet address
+        : 'GAHK7EEG2WWHVKDNT4CEQFZGKF2LGDSW2IVM4S5DP42RBW3K6BTODB4A'; // Replace with mainnet treasury
+
+      console.log(`🏦 Treasury address: ${treasuryAddress}`);
+      console.log(`🌐 Network: ${this.network}`);
+
+      // Validate treasury address format using Stellar SDK
+      if (!StrKey.isValidEd25519PublicKey(treasuryAddress)) {
+        throw new Error(`Invalid treasury address format: ${treasuryAddress}`);
+      }
 
       // Create asset
       const asset = currency.issuer 
@@ -252,19 +264,32 @@ export class PaymentProcessor {
       } catch (accountError) {
         console.error('❌ Failed to load account:', accountError);
         throw new Error('Account not found or not funded. Please ensure your account has XLM for fees.');
-      }
-        console.log(`💰 Creating payment operation: ${amount} ${currencyCode}`);
+      }      console.log(`💰 Creating payment operation: ${amount} ${currencyCode}`);
+      console.log(`📍 Destination: ${treasuryAddress}`);
+      console.log(`💳 Asset: ${asset.code === 'XLM' ? 'Native XLM' : `${asset.code}:${asset.issuer}`}`);
       
       // Convert amount to Stellar format (7 decimal places) if needed
       // For display format amounts like "100.00", we can use them directly for Stellar
       const stellarAmount = amount;
       
-      // Create payment operation
-      const paymentOp = Operation.payment({
-        destination: treasuryAddress,
-        asset: asset,
-        amount: stellarAmount
-      });
+      // Validate payment parameters
+      if (!stellarAmount || parseFloat(stellarAmount) <= 0) {
+        throw new Error(`Invalid payment amount: ${stellarAmount}`);
+      }
+        // Create payment operation with error handling
+      let paymentOp;
+      try {
+        paymentOp = Operation.payment({
+          destination: treasuryAddress,
+          asset: asset,
+          amount: stellarAmount
+        });
+        console.log(`✅ Payment operation created successfully`);
+      } catch (opError) {
+        console.error('❌ Failed to create payment operation:', opError);
+        const errorMessage = opError instanceof Error ? opError.message : String(opError);
+        throw new Error(`Failed to create payment operation: ${errorMessage}`);
+      }
 
       // Build transaction
       const transaction = new TransactionBuilder(account, {
