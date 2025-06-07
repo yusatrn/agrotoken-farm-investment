@@ -107,6 +107,13 @@ rwa-frontend/
 │   ├── marketplace/       # Asset marketplace
 │   ├── tokenize/          # Asset tokenization wizard
 │   ├── transfer/          # Token transfer interface
+│   ├── invest/            # Investment page with auto-minting
+│   ├── admin-dashboard/   # Admin monitoring and management
+│   ├── api/               # API endpoints for auto-minting
+│   │   ├── mint-tokens/   # Server-side token minting
+│   │   ├── queue-mint/    # Background queue processing
+│   │   ├── check-transaction/ # Transaction status monitoring
+│   │   └── check-admin/   # Admin privilege verification
 │   ├── dashboard/         # Dashboard redirect
 │   ├── layout.tsx         # Root layout
 │   └── globals.css        # Global styles
@@ -116,7 +123,8 @@ rwa-frontend/
 ├── lib/
 │   ├── types.ts           # TypeScript definitions
 │   ├── stellar.ts         # Stellar SDK utilities
-│   ├── contract.ts        # Smart contract client
+│   ├── contract.ts        # Smart contract client with auto-minting
+│   ├── payment.ts         # Payment processing with minting integration
 │   └── utils.ts           # Helper functions
 ├── stores/
 │   ├── wallet.ts          # Wallet state management
@@ -129,10 +137,11 @@ rwa-frontend/
 ## 💼 **Smart Contract Integration**
 
 ### **Contract Details**
-- **Contract ID**: `CBQAAC4EHNMMHEI2W3QU6UQ5N4KSVYRLVTB5M2XMARCNS4CNLWMX3VQ6`
+- **Contract ID**: `CD22CFPEPDUXEBYLZ3LJA233UI5WRVQNT4UVWDKSOYONACWBQ5JMG5EX`
 - **Network**: Stellar Testnet
-- **Asset**: Luxury Apartment NYC (LAPT)
-- **Type**: Premium Manhattan real estate token
+- **Asset**: AgroToken Farm Investment (AGRO)
+- **Type**: Agricultural asset tokenization platform
+- **Admin Public Key**: `GCNBHES7OAVHZU7W5IJBACKRPC6GPW4S7VETH4DMQEYAYDSRWI467CRO`
 
 ### **Supported Operations**
 
@@ -143,223 +152,327 @@ rwa-frontend/
 | `transfer` | Send tokens between addresses | ✅ Implemented |
 | `check_compliance` | Verify KYC/whitelist status | ✅ Implemented |
 | `get_supply` | Get total token supply | ✅ Implemented |
-| `mint` | Create new tokens (admin) | 🔄 Admin only |
-| `pause` | Pause contract operations | 🔄 Admin only |
+| `mint_simple` | Create new tokens (automated) | ✅ Auto-minting |
+| `mint` | Create new tokens (admin) | ✅ Implemented |
+| `pause` | Pause contract operations | ✅ Admin only |
 
 ### **Asset Metadata Structure**
 
 ```typescript
 interface AssetMetadata {
-  name: string;              // "Luxury Apartment NYC"
-  symbol: string;            // "LAPT"  
-  asset_type: string;        // "real_estate"
-  description: string;       // Asset description
+  name: string;              // "AgroToken Farm Investment"
+  symbol: string;            // "AGRO"  
+  asset_type: string;        // "agricultural"
+  description: string;       // "Agricultural asset tokenization platform"
   valuation: string;         // Current USD value
   last_valuation_date: number; // Unix timestamp
-  legal_doc_hash: string;    // Property deed hash
+  legal_doc_hash: string;    // Legal documentation hash
 }
 ```
 
 ---
 
-## 📦 **Smart Contract Deployment**
+## 🤖 **Automatic Token Minting System**
 
-### **Prerequisites for Deployment**
-- Rust programming language ([Install Rust](https://rustup.rs/))
-- Soroban CLI (`cargo install --locked soroban-cli`)
-- WASM target (`rustup target add wasm32-unknown-unknown`)
+The AgroToken platform features a sophisticated multi-layered automatic token minting system that eliminates the need for manual admin intervention when users make investments.
 
-### **Quick Deployment (Automated)**
-```powershell
-# Run the automated deployment script
-.\deploy-contract.ps1
+### **How It Works**
 
-# Test your deployed contract
-.\test-contract.ps1 -ContractId YOUR_CONTRACT_ID
-```
+1. **Primary Path - Server-side API Minting**: Uses admin credentials to mint tokens automatically through `/api/mint-tokens`
+2. **Secondary Path - Direct User Wallet**: For users with admin privileges, tokens are minted directly 
+3. **Fallback Path - Background Queue**: Failed mints are queued for processing via `/api/queue-mint`
 
-### **Manual Deployment Steps**
+### **Configuration**
 
-1. **Generate Stellar Account**
+To enable automatic minting, administrators must configure the following in `.env.local`:
+
 ```bash
-soroban keys generate alice
-soroban keys address alice
+# Contract Admin Credentials
+CONTRACT_ADMIN_PUBLIC_KEY=GCNBHES7OAVHZU7W5IJBACKRPC6GPW4S7VETH4DMQEYAYDSRWI467CRO
+CONTRACT_ADMIN_SECRET_KEY=YOUR_ADMIN_SECRET_KEY_HERE
+
+# Stellar network configuration
+STELLAR_NETWORK=testnet
+
+# Base URL for API calls
+NEXT_PUBLIC_BASE_URL=http://localhost:3000
+
+# Internal API security
+INTERNAL_API_KEY=your_secure_internal_api_key_here
 ```
 
-2. **Configure Testnet**
-```bash
-soroban network add testnet \
-  --rpc-url https://soroban-testnet.stellar.org:443 \
-  --network-passphrase "Test SDF Network ; September 2015"
+### **Monitoring & Management**
 
-soroban network use testnet
-```
+- **Admin Dashboard**: Available at `/admin-dashboard` for monitoring minting operations
+- **Transaction Status**: Real-time status updates for token minting operations
+- **Error Handling**: Comprehensive error recovery and user feedback
 
-3. **Fund Account**
-```bash
-soroban keys fund alice --network testnet
-```
+### **Security Features**
 
-4. **Build Contract**
-```bash
-cargo build --target wasm32-unknown-unknown --release
-```
-
-5. **Deploy to Testnet**
-```bash
-soroban contract deploy \
-  --wasm target/wasm32-unknown-unknown/release/agrotoken_farm_investment.wasm \
-  --source alice \
-  --network testnet
-```
-
-6. **Update Frontend Configuration**
-After deployment, update the contract ID in `rwa-frontend/lib/stellar.ts`:
-```typescript
-export const RWA_CONTRACT_ID = 'YOUR_DEPLOYED_CONTRACT_ID';
-```
-
-### **Verification**
-- Check deployment on [Stellar Testnet Explorer](https://stellar.expert/explorer/testnet)
-- View detailed deployment guide: `STELLAR_DEPLOYMENT_GUIDE.md`
+- Admin credentials stored securely server-side only
+- Multi-layer authentication for API endpoints
+- Background processing with internal API security
+- Transaction verification and status monitoring
 
 ---
 
-## 🚀 **Current Deployment Status & Next Steps**
+## 🔗 **API Endpoints & Features**
 
-### **✅ Completed**
-- ✅ Real contract client implementation (replaced mock system)
-- ✅ Freighter wallet integration with real blockchain transactions
-- ✅ Stellar SDK integration with proper RPC configuration
-- ✅ Error handling and fallback systems for network issues
-- ✅ Deployment scripts and documentation ready
+The platform provides several API endpoints for automatic token minting and management:
 
-### **🔄 Current Status: Ready for Contract Deployment**
+### **Automatic Minting APIs**
 
-The platform is now configured to use real Stellar blockchain transactions. The only step remaining is to deploy the Soroban smart contract to testnet and update the frontend configuration.
+| Endpoint | Method | Purpose | Status |
+|----------|--------|---------|--------|
+| `/api/mint-tokens` | POST | Server-side token minting with admin credentials | ✅ Active |
+| `/api/queue-mint` | POST | Background queue processing for failed mints | ✅ Active |
+| `/api/check-transaction` | GET | Monitor transaction status and confirmation | ✅ Active |
+| `/api/check-admin` | GET | Verify if wallet has admin privileges | ✅ Active |
 
-### **⚡ Quick Deployment Guide**
+### **Usage Examples**
 
-#### **Step 1: Check Prerequisites**
-```powershell
-# Check if Visual Studio Build Tools are installed
-.\check-build-tools.ps1
-```
-
-#### **Step 2: Install Visual Studio Build Tools (if needed)**
-If the check shows missing build tools:
-1. Download from: https://visualstudio.microsoft.com/downloads/
-2. Select "Build Tools for Visual Studio 2022"
-3. During installation, select:
-   - ✅ **C++ build tools**
-   - ✅ **Windows 10/11 SDK** 
-   - ✅ **MSVC v143 compiler toolset**
-4. Restart your terminal after installation
-
-#### **Step 3: Deploy Contract to Stellar Testnet**
-```powershell
-# Run the simplified deployment script
-.\deploy-contract-simple.ps1
-
-# The script will:
-# - Install Soroban CLI if needed
-# - Generate Stellar keypair
-# - Fund testnet account
-# - Build and deploy contract
-# - Save contract ID to CONTRACT_ID.txt
-```
-
-#### **Step 4: Update Frontend Configuration**
-After successful deployment, the script will show you the contract ID. Update it in:
-
-**File:** `rwa-frontend/lib/stellar.ts`
+#### **Automatic Token Minting**
 ```typescript
-// Replace this line:
-export const RWA_CONTRACT_ID = 'CBQAAC4EHNMMHEI2W3QU6UQ5N4KSVYRLVTB5M2XMARCNS4CNLWMX3VQ6';
-
-// With your deployed contract ID:
-export const RWA_CONTRACT_ID = 'YOUR_DEPLOYED_CONTRACT_ID_HERE';
+// Investment flow automatically triggers minting
+const response = await fetch('/api/mint-tokens', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    destinationAddress: userWalletAddress,
+    amount: tokenAmount,
+    source: 'investment'
+  })
+});
 ```
 
-#### **Step 5: Test Real Transfers**
-1. Start the frontend: `cd rwa-frontend && npm run dev`
-2. Connect Freighter wallet
-3. Switch to Stellar Testnet in Freighter
-4. Navigate to Transfer page (`/transfer`)
-5. Test sending farm tokens to another address
-
-### **🔧 Troubleshooting**
-
-#### **Build Tools Issues**
-```powershell
-# Error: linker `link.exe` not found
-# Solution: Install Visual Studio Build Tools with C++ workload
-
-# Check installation
-.\check-build-tools.ps1
-
-# Alternative: Use Visual Studio Community
-# Install with "Desktop development with C++" workload
+#### **Transaction Status Monitoring**
+```typescript
+// Check transaction status
+const status = await fetch(`/api/check-transaction?hash=${txHash}`);
+const result = await status.json();
 ```
 
-#### **Soroban CLI Issues**
-```powershell
-# Error: soroban command not found
-# Solution: Install manually
-cargo install --locked soroban-cli
+### **Key Platform Features**
 
-# Add to PATH if needed
-# C:\Users\{username}\.cargo\bin
-```
+#### **🤖 Intelligent Auto-Minting**
+- **Primary**: Server-side minting using secure admin credentials
+- **Secondary**: Direct user wallet minting for privileged users  
+- **Fallback**: Background queue system for reliable processing
+- **Monitoring**: Real-time status updates and transaction tracking
 
-#### **Contract Deployment Issues**
-```powershell
-# Error: RPC timeout or network issues
-# Solution: Wait and retry, testnet can be slow
+#### **👨‍💼 Admin Dashboard**
+- **Operation Monitoring**: View pending and completed minting operations
+- **Manual Intervention**: Process tokens manually when automatic systems fail
+- **System Health**: Check RPC connectivity and system status
+- **User Management**: Verify admin privileges and manage access
 
-# Check contract status on Stellar Explorer:
-# https://stellar.expert/explorer/testnet/contract/YOUR_CONTRACT_ID
-```
+#### **🎯 Investment Experience**
+- **Seamless Flow**: One-click investment with automatic token delivery
+- **Real-time Feedback**: Transaction status updates and confirmations
+- **Error Recovery**: Graceful handling of network or system issues
+- **Portfolio Integration**: Automatic balance updates upon token receipt
 
-### **📋 Development vs Production**
-
-| Environment | Contract | Network | Purpose |
-|-------------|----------|---------|---------|
-| **Development** | Mock Client | Local | UI development and testing |
-| **Testing** | Real Contract | Testnet | Integration testing |
-| **Production** | Real Contract | Mainnet | Live application |
-
-### **🎯 Next Steps After Deployment**
-
-1. **✅ Contract Deployed** - Real Soroban contract on Stellar testnet
-2. **🔄 Test Transfers** - Verify farm token transfers work end-to-end  
-3. **🔄 Admin Functions** - Test minting, pausing, and administrative operations
-4. **🔄 UI Polish** - Enhance transfer confirmations and error messages
-5. **🔄 Production Deployment** - Deploy to mainnet for live use
-
-### **💡 Alternative: Skip Contract Deployment**
-
-If you want to test the UI without deploying:
-- The platform includes a fallback system
-- It will use `DevelopmentContractClient` if contract deployment fails
-- All UI features work with simulated data
-- Perfect for frontend development and testing
+#### **🛡️ Security & Compliance**
+- **Whitelist Management**: Address-based access control
+- **KYC Integration**: Compliance verification before transactions
+- **Audit Trail**: Complete transaction history and logging
+- **Secure Storage**: Admin credentials protected server-side only
 
 ---
 
-## 📞 **Support & Issues**
+## 📦 **Smart Contract - Deployed & Active**
 
-If you encounter issues during deployment:
+### **✅ Deployment Status**
+- **Status**: Successfully Deployed & Initialized
+- **Date**: June 5, 2025
+- **Network**: Stellar Testnet
+- **Contract Explorer**: [View on Stellar Expert](https://stellar.expert/explorer/testnet/contract/CD22CFPEPDUXEBYLZ3LJA233UI5WRVQNT4UVWDKSOYONACWBQ5JMG5EX)
 
-1. **Check Prerequisites**: Run `.\check-build-tools.ps1`
-2. **Review Logs**: Deployment script provides detailed error messages
-3. **Try Manual Steps**: Follow `STELLAR_DEPLOYMENT_GUIDE.md` for step-by-step deployment
-4. **Network Issues**: Stellar testnet can be slow, retry after a few minutes
-5. **Open Issue**: Report problems with full error logs
+### **📋 Contract Information**
+- **Initial Supply**: 1,000,000,000 AGRO tokens
+- **Current Valuation**: $1,000.00 
+- **Legal Document Hash**: `QmYwAPJzv5CZsnA4qWkc2bGhJ2mGmbkVr8sxCTBCPLGSoL`
+- **Contract Status**: Active (not paused)
 
-**Contract Status**: Ready for deployment ✅  
-**Frontend Status**: Configured for real transactions ✅  
-**Prerequisites**: Visual Studio Build Tools required 🔧
+### **🔧 Administrative Tools**
+
+For administrators who need to interact with the contract directly:
+
+```powershell
+# Test contract functionality
+.\test-contract.ps1 -ContractId CD22CFPEPDUXEBYLZ3LJA233UI5WRVQNT4UVWDKSOYONACWBQ5JMG5EX
+
+# Verify automatic minting configuration
+.\verify-auto-minting.ps1
+
+# Manual token minting (if auto-minting fails)
+.\mint-tokens.ps1 -UserAddress "G..." -TokenAmount "100"
+
+# Whitelist a new user address
+.\whitelist-user.ps1 -UserAddress "G..."
+```
+
+### **📖 Additional Documentation**
+- **Deployment Details**: See `DEPLOYMENT_COMPLETE.md`
+- **Auto-Minting Setup**: See `AUTO_MINTING_CONFIG.md` 
+- **Admin Guide**: See `ADMIN_MINT_GUIDE.md`
+- **Usage Examples**: See `USAGE_GUIDE.md`
+
+---
+
+## 🚀 **Platform Status & Getting Started**
+
+### **✅ Production Ready Features**
+- ✅ **Smart Contract Deployed** - Live on Stellar Testnet with full functionality
+- ✅ **Automatic Token Minting** - Multi-layered system with server-side, user wallet, and queue fallbacks
+- ✅ **Real Blockchain Integration** - Freighter wallet integration with actual Stellar transactions
+- ✅ **Admin Dashboard** - Complete monitoring and management interface
+- ✅ **Investment Flow** - End-to-end investment process with automatic token delivery
+- ✅ **Error Handling** - Comprehensive error recovery and user feedback
+- ✅ **Transaction Monitoring** - Real-time status updates and transaction tracking
+
+### **🎯 Quick Start Guide**
+
+#### **For Users**
+1. **Install Freighter Wallet**: Download from [freighter.app](https://freighter.app/)
+2. **Switch to Testnet**: Configure Freighter for Stellar Testnet
+3. **Fund Your Wallet**: Get testnet XLM from [Stellar Laboratory](https://laboratory.stellar.org/#account-creator)
+4. **Start Investing**: Visit the platform at `http://localhost:3000`
+
+#### **For Developers**
+```powershell
+# Clone and setup the frontend
+cd rwa-frontend
+npm install
+npm run dev
+
+# The platform will be available at http://localhost:3000
+```
+
+#### **For Administrators**
+```powershell
+# Configure automatic minting (first time setup)
+# 1. Edit .env.local with your admin credentials
+# 2. Verify configuration
+.\verify-auto-minting.ps1
+
+# 3. Start the platform
+cd rwa-frontend
+npm run dev
+
+# 4. Access admin dashboard at http://localhost:3000/admin-dashboard
+```
+
+### **🔧 Configuration**
+
+#### **Environment Setup**
+Create or update `.env.local` in the `rwa-frontend` directory:
+```bash
+# Admin credentials for automatic minting
+CONTRACT_ADMIN_PUBLIC_KEY=GCNBHES7OAVHZU7W5IJBACKRPC6GPW4S7VETH4DMQEYAYDSRWI467CRO
+CONTRACT_ADMIN_SECRET_KEY=YOUR_ACTUAL_SECRET_KEY_HERE
+
+# Network configuration
+STELLAR_NETWORK=testnet
+NEXT_PUBLIC_BASE_URL=http://localhost:3000
+
+# API security
+INTERNAL_API_KEY=your_secure_api_key_here
+```
+
+### **🎮 Testing the Platform**
+
+#### **Investment Flow Test**
+1. Connect Freighter wallet (testnet)
+2. Navigate to `/invest`
+3. Select investment amount
+4. Complete payment
+5. Verify automatic token minting
+6. Check your wallet balance
+
+#### **Admin Functions Test**
+1. Connect with admin wallet
+2. Access `/admin-dashboard`
+3. Monitor pending minting operations
+4. Test manual minting if needed
+
+### **📊 Platform Architecture**
+
+| Component | Status | Purpose |
+|-----------|--------|---------|
+| **Smart Contract** | ✅ Deployed | Token management and compliance |
+| **Frontend App** | ✅ Ready | User interface and wallet integration |
+| **Auto-Minting APIs** | ✅ Active | Automatic token delivery system |
+| **Admin Dashboard** | ✅ Available | Monitoring and management |
+| **Error Recovery** | ✅ Implemented | Fallback systems and queue processing |
+
+---
+
+## 📞 **Support & Troubleshooting**
+
+### **🔧 Common Issues & Solutions**
+
+#### **Auto-Minting Issues**
+```powershell
+# Check auto-minting configuration
+.\verify-auto-minting.ps1
+
+# Test auto-minting endpoints
+.\test-auto-minting.ps1
+
+# Manual token minting if automatic fails
+.\mint-tokens.ps1 -UserAddress "G..." -TokenAmount "100"
+```
+
+#### **Wallet Connection Issues**
+- Ensure Freighter wallet is installed and unlocked
+- Switch to Stellar Testnet in Freighter settings
+- Fund your testnet account with XLM
+
+#### **Transaction Failures**
+- Check network connectivity to Stellar RPC
+- Verify account has sufficient XLM for fees
+- Ensure recipient address is whitelisted
+
+#### **Admin Functions**
+- Verify admin credentials in `.env.local`
+- Check admin account has sufficient XLM
+- Use admin dashboard for monitoring operations
+
+### **📋 Verification Tools**
+
+```powershell
+# Check overall system health
+.\verify-deployment.ps1
+
+# Test contract functions
+.\test-contract.ps1
+
+# Check auto-minting system
+.\check-auto-minting.ps1
+```
+
+### **📚 Documentation Resources**
+
+- **`AUTO_MINTING_CONFIG.md`** - Complete auto-minting setup guide
+- **`ADMIN_MINT_GUIDE.md`** - Manual minting procedures for admins
+- **`DEPLOYMENT_COMPLETE.md`** - Detailed deployment information
+- **`USAGE_GUIDE.md`** - Platform usage examples
+- **`STELLAR_DEPLOYMENT_GUIDE.md`** - Contract deployment procedures
+
+### **🚨 Getting Help**
+
+If you encounter issues:
+
+1. **Check Configuration**: Run verification scripts first
+2. **Review Documentation**: See the comprehensive guides above
+3. **Check Network Status**: Stellar testnet can experience delays
+4. **Admin Support**: Use the admin dashboard for operational issues
+5. **Error Logs**: Check console logs for detailed error information
+
+**Platform Status**: ✅ Production Ready  
+**Auto-Minting**: ✅ Fully Operational  
+**Smart Contract**: ✅ Deployed & Active
 
 ---
 
