@@ -23,7 +23,7 @@ $requiredVars = @(
 
 $missingVars = @()
 foreach ($var in $requiredVars) {
-    if ($envContent -notmatch "$var=\S+") {
+    if ($envContent -notmatch "$var=[^`r`n]+") {
         $missingVars += $var
     }
 }
@@ -87,7 +87,7 @@ if ($envContent -match 'CONTRACT_ADMIN_PUBLIC_KEY=([^"\r\n]+)') {
 }
 
 Write-Host "`n📋 Auto-Minting Verification Summary:" -ForegroundColor Cyan
-if ($missingVars.Count -eq 0 -and $missingApis.Count -eq 0 -and $adminPublicKey -match "^G[A-Z0-9]{55}$") {
+if ($missingVars.Count -eq 0 -and $missingApis.Count -eq 0 -and $adminPublicKey -match '^G[A-Z0-9]{55}$') {
     Write-Host "✅ Auto-minting system appears to be properly configured" -ForegroundColor Green
     Write-Host "   Run 'npm run dev' to start the application with auto-minting enabled." -ForegroundColor Green
 }

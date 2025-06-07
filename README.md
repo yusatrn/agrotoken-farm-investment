@@ -20,6 +20,12 @@ The AgroToken Farm Investment Platform democratizes access to agricultural inves
 - 📋 **Compliance Management** - Organic certification and agricultural compliance tools
 - 🌱 **Sustainable Focus** - Support for organic and sustainable farming practices
 
+#### **New Features**
+- ✨ **Automatic Token Minting** - Tokens are automatically minted to investors upon investment
+- 🔄 **Multi-layered Minting Approach** - Server-side, user wallet, and background queue fallbacks
+- 📊 **Transaction Status Monitoring** - Real-time status updates for token minting operations
+- 🛡️ **Admin Dashboard** - Monitor and manage token minting operations
+
 #### **For Investors**
 - 💼 **Farm Portfolio Dashboard** - Overview of agricultural investments with real-time valuations
 - 🏪 **Agricultural Marketplace** - Discover and filter farm investment opportunities  

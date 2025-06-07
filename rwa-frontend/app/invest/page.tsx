@@ -31,13 +31,72 @@ export default function InvestmentPage() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [paymentProcessor] = useState(() => new PaymentProcessor('testnet'));
   const [portfolioValue, setPortfolioValue] = useState<any>(null);
-
+  
+  // New state variables for better user feedback
+  const [successMessage, setSuccessMessage] = useState<{
+    title: string;
+    message: string;
+    details: { label: string; value: string }[];
+    note: string;
+  } | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [transactionStatus, setTransactionStatus] = useState<{
+    hash: string;
+    status: 'pending' | 'completed' | 'failed';
+    lastChecked: string;
+  } | null>(null);
   // Load user portfolio on mount
   useEffect(() => {
     if (address) {
       loadPortfolio();
     }
   }, [address]);
+  
+  // Function to poll for transaction status
+  const startTransactionStatusPolling = (txHash: string) => {
+    let attempts = 0;
+    const maxAttempts = 10;
+    
+    const pollInterval = setInterval(async () => {
+      if (attempts >= maxAttempts) {
+        clearInterval(pollInterval);
+        return;
+      }
+      
+      attempts++;
+      
+      try {
+        // This would call an API endpoint that checks transaction status
+        const response = await fetch(`/api/check-transaction?hash=${txHash}`);
+        if (response.ok) {
+          const data = await response.json();
+          
+          setTransactionStatus(prev => ({
+            ...prev!,
+            status: data.status === 'SUCCESS' ? 'completed' : 
+                   data.status === 'FAILED' ? 'failed' : 'pending',
+            lastChecked: new Date().toISOString()
+          }));
+          
+          // If transaction is complete, stop polling and refresh portfolio
+          if (data.status === 'SUCCESS') {
+            clearInterval(pollInterval);
+            loadPortfolio();
+          }
+          
+          // If transaction failed, stop polling
+          if (data.status === 'FAILED') {
+            clearInterval(pollInterval);
+          }
+        }
+      } catch (error) {
+        console.error('Error polling transaction status:', error);
+      }
+    }, 10000); // Check every 10 seconds
+    
+    // Store the interval ID for cleanup
+    return () => clearInterval(pollInterval);
+  };
 
   const loadPortfolio = async () => {
     if (!address) return;
@@ -95,19 +154,43 @@ export default function InvestmentPage() {
         selectedPackage,
         investmentAmount,
         selectedCurrency
-      );
-
-      console.log('💳 Payment result:', result);
+      );      console.log('💳 Payment result:', result);
 
       if (result.success) {
-        const message = `Investment successful! You received ${result.farmTokens} farm tokens.${result.note ? '\n\nNote: ' + result.note : ''}`;
+        // Use state to show proper success message instead of alert
+        setSuccessMessage({
+          title: 'Investment Successful!',
+          message: `You have successfully invested ${investmentAmount} ${selectedCurrency}.`,
+          details: [
+            { label: 'Farm Tokens', value: `${result.farmTokens} ${selectedPackageData?.farmTokenSymbol || ''}` },
+            { label: 'Transaction Hash', value: result.transactionHash || 'Processing' },
+          ],
+          note: result.note || ''
+        });
+        
         console.log('✅ Investment successful:', result);
-        alert(message);
+        
+        // Check for transaction hash to monitor token minting
+        if (result.transactionHash) {
+          setTransactionStatus({
+            hash: result.transactionHash,
+            status: 'pending',
+            lastChecked: new Date().toISOString()
+          });
+          
+          // Start polling for transaction status if tokens are being minted asynchronously
+          if (result.note?.includes('will be delivered shortly') || 
+              result.note?.includes('in progress') || 
+              result.note?.includes('minted by an administrator')) {
+            startTransactionStatusPolling(result.transactionHash);
+          }
+        }
+        
         await loadPortfolio(); // Refresh portfolio
         setInvestmentAmount('');
       } else {
         console.error('❌ Investment failed:', result);
-        alert('Investment failed. Please try again.');
+        setErrorMessage('Investment failed. Please try again.');
       }
     } catch (error) {
       console.error('💥 Investment error:', error);
@@ -353,9 +436,7 @@ export default function InvestmentPage() {
                         <strong>Secure Investment:</strong> Your investment is protected by Stellar blockchain 
                         technology and smart contracts. All transactions are transparent and verifiable.
                       </AlertDescription>
-                    </Alert>
-
-                    {/* Validation Feedback */}
+                    </Alert>                    {/* Validation Feedback */}
                     {(!selectedPackage || !investmentAmount) && (
                       <Alert className="border-yellow-200 bg-yellow-50">
                         <AlertTriangle className="h-4 w-4 text-yellow-600" />
@@ -365,6 +446,16 @@ export default function InvestmentPage() {
                             : !selectedPackage 
                             ? 'Please select an investment package from the left.'
                             : 'Please enter an investment amount.'}
+                        </AlertDescription>
+                      </Alert>
+                    )}
+                    
+                    {/* Error Message */}
+                    {errorMessage && (
+                      <Alert className="border-red-200 bg-red-50">
+                        <AlertTriangle className="h-4 w-4 text-red-600" />
+                        <AlertDescription className="text-red-800">
+                          {errorMessage}
                         </AlertDescription>
                       </Alert>
                     )}
@@ -389,8 +480,73 @@ export default function InvestmentPage() {
                 </Card>
               )}
             </div>
-          </div>
-
+          </div>          {/* Success Message Dialog */}
+          {successMessage && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+              <Card className="max-w-lg w-full">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <CheckCircle className="h-5 w-5 text-green-600" />
+                    {successMessage.title}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="mb-4">{successMessage.message}</p>
+                  
+                  {successMessage.details.length > 0 && (
+                    <div className="bg-gray-50 p-4 rounded-md mb-4">
+                      {successMessage.details.map((detail, idx) => (
+                        <div key={idx} className="flex justify-between mb-2 last:mb-0">
+                          <span className="text-gray-600">{detail.label}:</span>
+                          <span className="font-mono font-medium">{detail.value}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  
+                  {transactionStatus && (
+                    <div className="border border-gray-200 rounded-md p-4 mb-4">
+                      <h4 className="font-medium mb-2">Transaction Status</h4>
+                      <div className="flex justify-between mb-2">
+                        <span className="text-gray-600">Status:</span>
+                        <span className={`font-medium ${
+                          transactionStatus.status === 'completed' ? 'text-green-600' :
+                          transactionStatus.status === 'failed' ? 'text-red-600' :
+                          'text-yellow-600'
+                        }`}>
+                          {transactionStatus.status.charAt(0).toUpperCase() + transactionStatus.status.slice(1)}
+                        </span>
+                      </div>
+                      <div className="flex justify-between mb-2">
+                        <span className="text-gray-600">Transaction Hash:</span>
+                        <span className="font-mono text-sm overflow-hidden text-ellipsis">{transactionStatus.hash.substring(0, 10)}...</span>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {successMessage.note && (
+                    <Alert className="bg-blue-50 border-blue-200">
+                      <Info className="h-4 w-4 text-blue-600" />
+                      <AlertDescription className="text-blue-800">
+                        {successMessage.note}
+                      </AlertDescription>
+                    </Alert>
+                  )}
+                  
+                  <Button 
+                    onClick={() => {
+                      setSuccessMessage(null);
+                      // Don't reset transaction status - it should continue updating
+                    }}
+                    className="w-full bg-green-600 hover:bg-green-700 mt-4"
+                  >
+                    Close
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+          
           {/* Features */}
           <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
             <Card>
