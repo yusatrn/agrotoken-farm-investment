@@ -4,13 +4,19 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Header } from '@/components/layout/Header';
-import { RefreshCw, CheckCircle, XCircle, Clock } from 'lucide-react';
+import { RefreshCw } from 'lucide-react';
 import { useWalletStore } from '@/stores/wallet';
 
 export default function AdminDashboardPage() {
   const { address, isConnected, connect } = useWalletStore();
   const [isAdmin, setIsAdmin] = useState(false);
-  const [pendingMints, setPendingMints] = useState<any[]>([]);
+  const [pendingMints, setPendingMints] = useState<Array<{
+    id: string;
+    address: string;
+    amount: string;
+    status: string;
+    timestamp: number;
+  }>>([]);
   const [isLoading, setIsLoading] = useState(false);
   
   // Check if the connected wallet is an admin
@@ -163,6 +169,99 @@ export default function AdminDashboardPage() {
           
           {isAdmin && (
             <>
+              {/* Test Addresses Management Section */}
+              <Card className="mb-6">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    🧪 Test Addresses Management
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <p className="text-sm text-gray-600">
+                      Valid Stellar testnet addresses for testing and debugging purposes.
+                    </p>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="p-4 bg-blue-50 rounded-lg border">
+                        <h4 className="font-semibold text-blue-800 mb-2">Valid Test Address 1</h4>
+                        <p className="font-mono text-xs break-all mb-2">
+                          GCNBHES7OAVHZU7W5IJBACKRPC6GPW4S7VETH4DMQEYAYDSRWI467CRO
+                        </p>
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => {
+                            navigator.clipboard.writeText('GCNBHES7OAVHZU7W5IJBACKRPC6GPW4S7VETH4DMQEYAYDSRWI467CRO');
+                            alert('Address copied to clipboard!');
+                          }}
+                        >
+                          Copy Address
+                        </Button>
+                      </div>
+                      
+                      <div className="p-4 bg-green-50 rounded-lg border">
+                        <h4 className="font-semibold text-green-800 mb-2">Valid Test Address 2</h4>
+                        <p className="font-mono text-xs break-all mb-2">
+                          GDCPVECBCBLR4EXZHGHBWEVJ6ZN6PZLOZR5XXSV5SHQWDTD7VZQGRWEV
+                        </p>
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => {
+                            navigator.clipboard.writeText('GDCPVECBCBLR4EXZHGHBWEVJ6ZN6PZLOZR5XXSV5SHQWDTD7VZQGRWEV');
+                            alert('Address copied to clipboard!');
+                          }}
+                        >
+                          Copy Address
+                        </Button>
+                      </div>
+                      
+                      <div className="p-4 bg-purple-50 rounded-lg border">
+                        <h4 className="font-semibold text-purple-800 mb-2">Valid Test Address 3</h4>
+                        <p className="font-mono text-xs break-all mb-2">
+                          GAQ2XRNOQX4NRPXNQCVYXNQLJWQ7VGJJLGWBSXTG7WKJYQRFN4K2KCZV
+                        </p>
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => {
+                            navigator.clipboard.writeText('GAQ2XRNOQX4NRPXNQCVYXNQLJWQ7VGJJLGWBSXTG7WKJYQRFN4K2KCZV');
+                            alert('Address copied to clipboard!');
+                          }}
+                        >
+                          Copy Address
+                        </Button>
+                      </div>
+                      
+                      <div className="p-4 bg-orange-50 rounded-lg border">
+                        <h4 className="font-semibold text-orange-800 mb-2">Admin Test Address</h4>
+                        <p className="font-mono text-xs break-all mb-2">
+                          GAHK7EEG2WWHVKDNT4CEQFZGKF2LGDSW2IVM4S5DP42RBW3K6BTODB4A
+                        </p>
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => {
+                            navigator.clipboard.writeText('GAHK7EEG2WWHVKDNT4CEQFZGKF2LGDSW2IVM4S5DP42RBW3K6BTODB4A');
+                            alert('Address copied to clipboard!');
+                          }}
+                        >
+                          Copy Address
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                      <p className="text-sm text-yellow-800">
+                        <strong>Note:</strong> These addresses are for testing purposes only. 
+                        Use them when testing the mint API, payment system, or admin functions.
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-semibold">Pending Minting Operations</h2>
                 <Button 

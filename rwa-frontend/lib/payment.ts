@@ -53,19 +53,18 @@ export interface InvestmentPackage {
   id: string;
   name: string;
   description: string;
-  farmTokenSymbol: string; // GVOF, AGRO, etc.
+  farmTokenSymbol: string; // AGRO, etc.
   minimumInvestment: Record<string, string>; // currency -> amount
   expectedReturn: string; // APY percentage
   duration: number; // in days
   riskLevel: 'Low' | 'Medium' | 'High';
 }
 
-export const INVESTMENT_PACKAGES: InvestmentPackage[] = [
-  {
+export const INVESTMENT_PACKAGES: InvestmentPackage[] = [  {
     id: 'organic-farm-basic',
     name: 'Organic Farm - Basic Package',
     description: 'Entry-level investment in certified organic farmland',
-    farmTokenSymbol: 'GVOF',
+    farmTokenSymbol: 'AGRO',
     minimumInvestment: {
       'XLM': '10', // 10 XLM (display format)
       'USDC': '100', // $100 USDC (display format)
@@ -74,12 +73,11 @@ export const INVESTMENT_PACKAGES: InvestmentPackage[] = [
     expectedReturn: '8.5', // 8.5% APY
     duration: 365,
     riskLevel: 'Low'
-  },
-  {
+  },  {
     id: 'organic-farm-premium',
     name: 'Organic Farm - Premium Package',
     description: 'High-yield investment with guaranteed returns',
-    farmTokenSymbol: 'GVOF',
+    farmTokenSymbol: 'AGRO',
     minimumInvestment: {
       'XLM': '100', // 100 XLM (display format)
       'USDC': '1000', // $1000 USDC (display format)
@@ -506,10 +504,9 @@ export class PaymentProcessor {
       
       return {
         totalValue: currentValue,
-        currency: 'USD',
-        holdings: [
+        currency: 'USD',        holdings: [
           {
-            tokenSymbol: 'GVOF',
+            tokenSymbol: 'AGRO',
             amount: balance,
             currentValue: currentValue,
             gainLoss: '+0.00',

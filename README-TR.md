@@ -147,7 +147,7 @@ rwa-frontend/
 
 | İşlem | Açıklama | Durum |
 |-----------|-------------|--------|
-| `get_balance` | Kullanıcının token bakiyesini sorgula | ✅ Uygulandı |
+| `balance` | Kullanıcının token bakiyesini sorgula | ✅ Uygulandı |
 | `get_metadata` | Varlık bilgilerini al | ✅ Uygulandı |
 | `transfer` | Adresler arası token gönder | ✅ Uygulandı |
 | `check_compliance` | KYC/beyaz liste durumunu doğrula | ✅ Uygulandı |
@@ -495,6 +495,59 @@ AgroToken Çiftlik Yatırım Platformu, geleneksel tarım ile modern blockchain 
 **[Canlı Demo](link) • [Dokümantasyon](link) • [Topluluk](link) • [İletişim](link)**
 
 </div>
+
+---
+
+---
+
+## 🧪 **Test ve Doğrulama**
+
+AgroToken platformu, kontrat işlemlerinden frontend entegrasyonuna kadar tüm fonksiyonları doğrulamak için kapsamlı manuel test dokümantasyonu sağlar.
+
+### **📋 Manuel Test Rehberi**
+
+**[MANUEL_TEST_REHBERI.md](./MANUEL_TEST_REHBERI.md)** - Detaylı adım adım test talimatları
+
+### **🚀 Hızlı Test Kategorileri**
+
+| Test Kategorisi | Amaç | Test Edilen Özellikler |
+|-----------------|------|----------------------|
+| **Çevre Kontrolü** | Gerekli araçların varlığını doğrula | Stellar CLI, Node.js, ağ bağlantısı |
+| **Anahtar Yönetimi** | Stellar anahtarlarını yönet | Anahtar oluşturma, fonlama, adres kontrolü |
+| **Kontrat İşlemleri** | Temel kontrat fonksiyonları | Metadata, admin, supply sorguları |
+| **Token İşlemleri** | Token transfer ve bakiye | Bakiye kontrolü, transfer işlemleri |
+| **Frontend Testi** | Web arayüz doğrulaması | Sayfalar, wallet bağlantısı, işlemler |
+| **API Testleri** | Arka plan servisler | Auto-minting, admin kontrolü |
+
+### **🔧 Temel Test Komutları**
+
+```bash
+# Kontrat metadata kontrolü
+stellar contract invoke --id CD22CFPEPDUXEBYLZ3LJA233UI5WRVQNT4UVWDKSOYONACWBQ5JMG5EX \
+  --source alice --network testnet -- get_metadata
+
+# Token bakiye kontrolü  
+stellar contract invoke --id CD22CFPEPDUXEBYLZ3LJA233UI5WRVQNT4UVWDKSOYONACWBQ5JMG5EX \
+  --source alice --network testnet -- balance \
+  --address $(stellar keys address alice)
+
+# Frontend başlatma
+cd rwa-frontend && npm run dev
+```
+
+### **📊 Platform Durumu**
+
+- ✅ **Kontrat Deployed** - Stellar Testnet'te aktif
+- ✅ **Frontend Çalışıyor** - Next.js 15 + TypeScript
+- ✅ **Otomatik Minting** - API endpoints aktif
+- ✅ **Wallet Entegrasyonu** - Freighter wallet desteği
+- ✅ **Gerçek İşlemler** - Canlı blockchain işlemleri
+
+### **🔗 Test Kaynakları**
+
+- **Kontrat Explorer**: [stellar.expert](https://stellar.expert/explorer/testnet/contract/CD22CFPEPDUXEBYLZ3LJA233UI5WRVQNT4UVWDKSOYONACWBQ5JMG5EX)
+- **Network**: Stellar Testnet
+- **Test Faucet**: [friendbot.stellar.org](https://friendbot.stellar.org)
 
 ---
 

@@ -41,9 +41,21 @@ export default function Dashboard() {
   // Fetch user data when wallet connects
   useEffect(() => {
     if (isConnected && address) {
+      console.log('🔍 Fetching user data for address:', address);
       fetchUserData(address);
     }
   }, [isConnected, address, fetchUserData]);
+
+  // Debug: Log current state
+  useEffect(() => {
+    console.log('📊 Dashboard State:', {
+      isConnected,
+      address,
+      userBalance,
+      assetMetadata,
+      isWhitelisted
+    });
+  }, [isConnected, address, userBalance, assetMetadata, isWhitelisted]);
 
   // Show loading state while wallet is being restored
   if (isRestoring || !isInitialized) {
@@ -199,14 +211,16 @@ export default function Dashboard() {
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Farm Token Holdings</CardTitle>
                 <div className="text-xl">🌾</div>
-              </CardHeader>
-              <CardContent>
+              </CardHeader>              <CardContent>
                 <div className="text-2xl font-bold">
-                  {formatTokenAmount(userBalance)} {assetMetadata?.symbol || 'OWTX'}
+                  {userBalance ? formatTokenAmount(userBalance) : '0'} {assetMetadata?.symbol || 'OWTX'}
                 </div>
                 <p className="text-xs text-muted-foreground">
+                  Balance: {userBalance || '0'} (raw)
+                </p>
+                <p className="text-xs text-muted-foreground">
                   ≈ {formatCurrency(
-                    (parseFloat(formatTokenAmount(userBalance)) * 300).toString()
+                    (parseFloat(userBalance ? formatTokenAmount(userBalance) : '0') * 300).toString()
                   )}
                 </p>
               </CardContent>

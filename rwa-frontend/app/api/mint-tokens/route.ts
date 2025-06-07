@@ -102,13 +102,59 @@ async function mintTokensAsAdmin(
         error: 'Admin account not found or not funded'
       };
     }
+      // Create contract instance
+    const contract = new Contract(RWA_CONTRACT_ID);    // Prepare contract arguments with robust address handling
+    let addressScVal;
     
-    // Create contract instance
-    const contract = new Contract(RWA_CONTRACT_ID);
+    console.log(`Processing address: ${destinationAddress} (length: ${destinationAddress.length})`);
     
-    // Prepare contract arguments
+    // Basic format check - Stellar addresses should be 56 characters starting with G
+    if (!destinationAddress || destinationAddress.length !== 56 || !destinationAddress.startsWith('G')) {
+      return {
+        success: false,
+        error: `Invalid Stellar address format: ${destinationAddress}`
+      };
+    }
+    
+    try {
+      // Method 1: Direct Address.fromString conversion (most reliable)
+      addressScVal = Address.fromString(destinationAddress).toScVal();
+      console.log('✅ Address conversion successful using Address.fromString');
+      
+    } catch (addressError: any) {
+      console.warn(`Address.fromString failed for ${destinationAddress}:`, addressError);
+      
+      try {
+        // Method 2: Validate with Keypair and convert
+        const keypair = Keypair.fromPublicKey(destinationAddress);
+        addressScVal = Address.fromString(keypair.publicKey()).toScVal();
+        console.log('✅ Address conversion successful using Keypair validation');
+        
+      } catch (keypairError: any) {
+        console.warn(`Keypair validation failed for ${destinationAddress}:`, keypairError);
+          try {
+          // Method 3: Create account address directly with proper Buffer conversion
+          const keypairForAccount = Keypair.fromPublicKey(destinationAddress);
+          addressScVal = Address.account(keypairForAccount.rawPublicKey()).toScVal();
+          console.log('✅ Address conversion successful using Address.account');
+          
+        } catch (accountError: any) {
+          console.error('All address conversion methods failed:', {
+            original: addressError?.message || addressError,
+            keypair: keypairError?.message || keypairError,
+            account: accountError?.message || accountError
+          });
+          
+          return {
+            success: false,
+            error: `Invalid Stellar address: ${destinationAddress}. Please verify the address format.`
+          };
+        }
+      }
+    }
+    
     const args = [
-      Address.fromString(destinationAddress).toScVal(),
+      addressScVal,
       nativeToScVal(BigInt(amount), { type: 'i128' })
     ];
     

@@ -166,9 +166,10 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
     const url = new URL(request.url);
     const queueId = url.searchParams.get('queueId');
-    
-    if (!queueId) {
+      if (!queueId) {
       // Admin endpoint to see all queue items (would require auth in production)
+      const showItems = url.searchParams.get('showItems') === 'true';
+      
       // Count items by status
       const stats = {
         total: mintingQueue.size,
@@ -178,11 +179,33 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         failed: 0
       };
       
-      for (const item of mintingQueue.values()) {
+      const items: any[] = [];
+      
+      for (const [id, item] of mintingQueue.entries()) {
         stats[item.status]++;
+        
+        if (showItems) {
+          items.push({
+            id,
+            address: item.address,
+            amount: item.amount,
+            status: item.status,
+            timestamp: item.timestamp,
+            processingAttempts: item.processingAttempts,
+            error: item.error,
+            transactionHash: item.transactionHash
+          });
+        }
       }
       
-      return NextResponse.json({ success: true, stats });
+      // Sort items by timestamp (newest first)
+      items.sort((a, b) => b.timestamp - a.timestamp);
+      
+      return NextResponse.json({ 
+        success: true, 
+        stats,
+        items: showItems ? items : undefined
+      });
     }
     
     // Check specific queue item

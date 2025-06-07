@@ -188,7 +188,7 @@ The AgroToken platform features a sophisticated multi-layered automatic token mi
 
 | Operation | Description | Status |
 |-----------|-------------|--------|
-| `get_balance` | Query user's token balance | ✅ Implemented |
+| `balance` | Query user's token balance | ✅ Implemented |
 | `get_metadata` | Retrieve asset information | ✅ Implemented |
 | `transfer` | Send tokens between addresses | ✅ Implemented |
 | `check_compliance` | Verify KYC/whitelist status | ✅ Implemented |
@@ -196,6 +196,58 @@ The AgroToken platform features a sophisticated multi-layered automatic token mi
 | `mint_simple` | Create new tokens (automated) | ✅ Auto-minting |
 | `mint` | Create new tokens (admin) | ✅ Implemented |
 | `pause` | Pause contract operations | ✅ Admin only |
+
+---
+
+### 🧪 **Testing & Validation**
+
+The AgroToken platform provides comprehensive manual testing documentation to validate all functionality from contract operations to frontend integration.
+
+#### **📋 Manuel Test Rehberi**
+
+**[MANUEL_TEST_REHBERI.md](./MANUEL_TEST_REHBERI.md)** - Kapsamlı manuel test talimatları  
+**[HIZLI_BASLANGIC.md](./HIZLI_BASLANGIC.md)** - 5 dakikada başlangıç rehberi
+
+#### **🚀 Temel Test Kategorileri**
+
+| Test Kategorisi | Amaç | Test Edilen Özellikler |
+|-----------------|------|----------------------|
+| **Çevre Kontrolü** | Gerekli araçların varlığını doğrula | Stellar CLI, Node.js, ağ bağlantısı |
+| **Anahtar Yönetimi** | Stellar anahtarlarını yönet | Anahtar oluşturma, fonlama, adres kontrolü |
+| **Kontrat İşlemleri** | Temel kontrat fonksiyonları | Metadata, admin, supply sorguları |
+| **Token İşlemleri** | Token transfer ve bakiye | Bakiye kontrolü, transfer işlemleri |
+| **Frontend Testi** | Web arayüz doğrulaması | Sayfalar, wallet bağlantısı, işlemler |
+| **API Testleri** | Arka plan servisler | Auto-minting, admin kontrolü |
+
+#### **🔧 Hızlı Test Komutları**
+
+```bash
+# Kontrat metadata kontrolü
+stellar contract invoke --id CD22CFPEPDUXEBYLZ3LJA233UI5WRVQNT4UVWDKSOYONACWBQ5JMG5EX \
+  --source alice --network testnet -- get_metadata
+
+# Token bakiye kontrolü
+stellar contract invoke --id CD22CFPEPDUXEBYLZ3LJA233UI5WRVQNT4UVWDKSOYONACWBQ5JMG5EX \
+  --source alice --network testnet -- balance \
+  --address $(stellar keys address alice)
+
+# Frontend başlatma
+cd rwa-frontend && npm run dev
+```
+
+#### **📊 Test Durumu**
+
+- ✅ **Kontrat Deployed** - Stellar Testnet'te aktif
+- ✅ **Frontend Çalışıyor** - Next.js 15 + TypeScript
+- ✅ **Auto-minting** - API endpoints aktif
+- ✅ **Wallet Integration** - Freighter wallet desteği
+- ✅ **Real Transactions** - Gerçek blockchain işlemleri
+
+#### **🔗 Test Kaynakları**
+
+- **Contract Explorer**: [stellar.expert](https://stellar.expert/explorer/testnet/contract/CD22CFPEPDUXEBYLZ3LJA233UI5WRVQNT4UVWDKSOYONACWBQ5JMG5EX)
+- **Network**: Stellar Testnet
+- **Test Faucet**: [friendbot.stellar.org](https://friendbot.stellar.org)
 
 ---
 

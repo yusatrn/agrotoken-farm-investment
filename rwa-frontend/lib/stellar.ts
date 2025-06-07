@@ -32,10 +32,11 @@ export const createSorobanServer = (network: 'testnet' | 'mainnet' = DEFAULT_NET
   return NETWORKS[network].sorobanUrl;
 };
 
-// Format token amounts for display (contract uses 7 decimal places)
-export const formatTokenAmount = (amount: string | number, decimals = 7): string => {
+// Format token amounts for display (contract stores raw numbers without decimal scaling)
+export const formatTokenAmount = (amount: string | number, decimals = 0): string => {
   const num = typeof amount === 'string' ? parseFloat(amount) : amount;
-  const formatted = (num / Math.pow(10, decimals)).toLocaleString('en-US', {
+  // Our contract stores raw numbers without decimal scaling, so no division needed
+  const formatted = (decimals > 0 ? num / Math.pow(10, decimals) : num).toLocaleString('en-US', {
     minimumFractionDigits: 0,
     maximumFractionDigits: 2
   });
