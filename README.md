@@ -1,6 +1,17 @@
 # 🌾 AgroToken Farm Investment Platform
 
-A comprehensive agricultural asset tokenization and investment platform built on the Stellar blockchain. This platform enables farmers to tokenize their agricultural assets and allows investors to participate in sustainable farming through blockchain technology.
+<div align="center">
+
+**[English](#english) | [Türkçe](#türkçe)**
+
+</div>
+
+---
+
+<a name="english"></a>
+## 🇺🇸 English
+
+A comprehensive agricultural asset tokenization and investment platform built on the Stellar blockchain. This platform enables farmers to tokenize their agricultural assets and allows investors to participate in sustainable agriculture.
 
 ![AgroToken Platform](https://img.shields.io/badge/Platform-AgroToken_Farm_Investment-green)
 ![Blockchain](https://img.shields.io/badge/Blockchain-Stellar-brightgreen)
@@ -8,9 +19,9 @@ A comprehensive agricultural asset tokenization and investment platform built on
 ![TypeScript](https://img.shields.io/badge/Language-TypeScript-blue)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
-## 🎯 **Project Overview**
+### 🎯 **Project Overview**
 
-The AgroToken Farm Investment Platform democratizes access to agricultural investments by tokenizing farm assets on the Stellar blockchain. Farmers can access funding without selling their land, while investors can purchase fractional ownership of agricultural assets like organic farms, dairy operations, livestock ranches, and food processing facilities.
+The AgroToken Farm Investment Platform democratizes access to agricultural investments by tokenizing farm assets on the Stellar blockchain. Farmers can access funding without selling their land, while investors can make secure and transparent investments in sustainable agriculture.
 
 ### **🌟 Key Features**
 
@@ -33,13 +44,7 @@ The AgroToken Farm Investment Platform democratizes access to agricultural inves
 - 📊 **Performance Tracking** - Monitor yields, organic certification status, and harvest projections
 - 🔐 **Wallet Integration** - Seamless Freighter wallet connectivity
 
-#### **For Asset Owners (Farmers)**
-- 🌱 **Farm Listing Wizard** - 5-step process to tokenize agricultural assets
-- 📋 **Agricultural Compliance** - Organic certification and regulatory compliance tools
-- 📈 **Funding Management** - Set investment goals and track capital raising
-- 🔒 **Legal Framework** - Land ownership verification and legal compliance
-
-#### **Platform Features**
+### **📱 Platform Features**
 - 🌾 **Multi-Farm Support** - Cropland, livestock, dairy farms, food processing
 - ⚡ **Stellar Integration** - Fast, low-cost blockchain transactions
 - 🛡️ **Organic Compliance** - Built-in organic certification and investor validation
@@ -47,18 +52,46 @@ The AgroToken Farm Investment Platform democratizes access to agricultural inves
 
 ---
 
-## 🚀 **Quick Start**
+### 🔑 **Stellar Network Information**
 
-### **Prerequisites**
+#### **Smart Contract Details**
+- **Contract ID**: `CD22CFPEPDUXEBYLZ3LJA233UI5WRVQNT4UVWDKSOYONACWBQ5JMG5EX`
+- **Network**: Stellar Testnet
+- **Asset**: AgroToken Farm Investment (AGRO)
+- **Type**: Agricultural asset tokenization platform
+
+#### **Public Key Information**
+```
+Admin Public Key: GCNBHES7OAVHZU7W5IJBACKRPC6GPW4S7VETH4DMQEYAYDSRWI467CRO
+```
+
+> **Note**: This public key has contract admin privileges and is used for platform management. Secret key information is not shared for security reasons.
+
+#### **Network Configuration**
+```bash
+# Stellar Testnet
+RPC_URL=https://soroban-testnet.stellar.org:443
+HORIZON_URL=https://horizon-testnet.stellar.org
+NETWORK_PASSPHRASE="Test SDF Network ; September 2015"
+
+# Contract Explorer
+https://stellar.expert/explorer/testnet/contract/CD22CFPEPDUXEBYLZ3LJA233UI5WRVQNT4UVWDKSOYONACWBQ5JMG5EX
+```
+
+---
+
+### 🚀 **Quick Start**
+
+#### **Prerequisites**
 - Node.js 18+ installed
 - [Freighter Wallet](https://freighter.app/) browser extension
 - Access to Stellar Testnet for development
 
-### **Installation**
+#### **Installation**
 
 ```bash
 # Clone the repository
-git clone https://github.com/[YOUR_USERNAME]/agrotoken-farm-investment.git
+git clone https://github.com/yusatrn/agrotoken-farm-investment.git
 cd agrotoken-farm-investment
 
 # Navigate to frontend directory
@@ -73,300 +106,10 @@ npm run dev
 
 Visit `http://localhost:3000` to access the AgroToken platform.
 
-### **Production Build**
+#### **Environment Configuration**
 
-```bash
-# Build for production
-npm run build
+Create `.env.local` file in the `rwa-frontend` directory:
 
-# Start production server
-npm start
-```
-
----
-
-## 🏗️ **Project Architecture**
-
-### **Technology Stack**
-
-| Component | Technology | Purpose |
-|-----------|------------|---------|
-| **Frontend** | Next.js 15 + TypeScript | React-based web application |
-| **Styling** | Tailwind CSS + shadcn/ui | Professional UI components |
-| **State Management** | Zustand | Lightweight state management |
-| **Blockchain** | Stellar SDK | Blockchain integration |
-| **Wallet** | Freighter API | Wallet connectivity |
-| **Icons** | Lucide React | Professional icon system |
-
-### **Directory Structure**
-
-```
-rwa-frontend/
-├── app/                    # Next.js App Router
-│   ├── page.tsx           # Dashboard (main page)
-│   ├── marketplace/       # Asset marketplace
-│   ├── tokenize/          # Asset tokenization wizard
-│   ├── transfer/          # Token transfer interface
-│   ├── invest/            # Investment page with auto-minting
-│   ├── admin-dashboard/   # Admin monitoring and management
-│   ├── api/               # API endpoints for auto-minting
-│   │   ├── mint-tokens/   # Server-side token minting
-│   │   ├── queue-mint/    # Background queue processing
-│   │   ├── check-transaction/ # Transaction status monitoring
-│   │   └── check-admin/   # Admin privilege verification
-│   ├── dashboard/         # Dashboard redirect
-│   ├── layout.tsx         # Root layout
-│   └── globals.css        # Global styles
-├── components/
-│   ├── ui/                # shadcn/ui components
-│   └── layout/            # Layout components
-├── lib/
-│   ├── types.ts           # TypeScript definitions
-│   ├── stellar.ts         # Stellar SDK utilities
-│   ├── contract.ts        # Smart contract client with auto-minting
-│   ├── payment.ts         # Payment processing with minting integration
-│   └── utils.ts           # Helper functions
-├── stores/
-│   ├── wallet.ts          # Wallet state management
-│   └── contract.ts        # Contract state management
-└── public/                # Static assets
-```
-
----
-
-## 💼 **Smart Contract Integration**
-
-### **Contract Details**
-- **Contract ID**: `CD22CFPEPDUXEBYLZ3LJA233UI5WRVQNT4UVWDKSOYONACWBQ5JMG5EX`
-- **Network**: Stellar Testnet
-- **Asset**: AgroToken Farm Investment (AGRO)
-- **Type**: Agricultural asset tokenization platform
-- **Admin Public Key**: `GCNBHES7OAVHZU7W5IJBACKRPC6GPW4S7VETH4DMQEYAYDSRWI467CRO`
-
-### **Supported Operations**
-
-| Operation | Description | Status |
-|-----------|-------------|--------|
-| `get_balance` | Query user's token balance | ✅ Implemented |
-| `get_metadata` | Retrieve asset information | ✅ Implemented |
-| `transfer` | Send tokens between addresses | ✅ Implemented |
-| `check_compliance` | Verify KYC/whitelist status | ✅ Implemented |
-| `get_supply` | Get total token supply | ✅ Implemented |
-| `mint_simple` | Create new tokens (automated) | ✅ Auto-minting |
-| `mint` | Create new tokens (admin) | ✅ Implemented |
-| `pause` | Pause contract operations | ✅ Admin only |
-
-### **Asset Metadata Structure**
-
-```typescript
-interface AssetMetadata {
-  name: string;              // "AgroToken Farm Investment"
-  symbol: string;            // "AGRO"  
-  asset_type: string;        // "agricultural"
-  description: string;       // "Agricultural asset tokenization platform"
-  valuation: string;         // Current USD value
-  last_valuation_date: number; // Unix timestamp
-  legal_doc_hash: string;    // Legal documentation hash
-}
-```
-
----
-
-## 🤖 **Automatic Token Minting System**
-
-The AgroToken platform features a sophisticated multi-layered automatic token minting system that eliminates the need for manual admin intervention when users make investments.
-
-### **How It Works**
-
-1. **Primary Path - Server-side API Minting**: Uses admin credentials to mint tokens automatically through `/api/mint-tokens`
-2. **Secondary Path - Direct User Wallet**: For users with admin privileges, tokens are minted directly 
-3. **Fallback Path - Background Queue**: Failed mints are queued for processing via `/api/queue-mint`
-
-### **Configuration**
-
-To enable automatic minting, administrators must configure the following in `.env.local`:
-
-```bash
-# Contract Admin Credentials
-CONTRACT_ADMIN_PUBLIC_KEY=GCNBHES7OAVHZU7W5IJBACKRPC6GPW4S7VETH4DMQEYAYDSRWI467CRO
-CONTRACT_ADMIN_SECRET_KEY=YOUR_ADMIN_SECRET_KEY_HERE
-
-# Stellar network configuration
-STELLAR_NETWORK=testnet
-
-# Base URL for API calls
-NEXT_PUBLIC_BASE_URL=http://localhost:3000
-
-# Internal API security
-INTERNAL_API_KEY=your_secure_internal_api_key_here
-```
-
-### **Monitoring & Management**
-
-- **Admin Dashboard**: Available at `/admin-dashboard` for monitoring minting operations
-- **Transaction Status**: Real-time status updates for token minting operations
-- **Error Handling**: Comprehensive error recovery and user feedback
-
-### **Security Features**
-
-- Admin credentials stored securely server-side only
-- Multi-layer authentication for API endpoints
-- Background processing with internal API security
-- Transaction verification and status monitoring
-
----
-
-## 🔗 **API Endpoints & Features**
-
-The platform provides several API endpoints for automatic token minting and management:
-
-### **Automatic Minting APIs**
-
-| Endpoint | Method | Purpose | Status |
-|----------|--------|---------|--------|
-| `/api/mint-tokens` | POST | Server-side token minting with admin credentials | ✅ Active |
-| `/api/queue-mint` | POST | Background queue processing for failed mints | ✅ Active |
-| `/api/check-transaction` | GET | Monitor transaction status and confirmation | ✅ Active |
-| `/api/check-admin` | GET | Verify if wallet has admin privileges | ✅ Active |
-
-### **Usage Examples**
-
-#### **Automatic Token Minting**
-```typescript
-// Investment flow automatically triggers minting
-const response = await fetch('/api/mint-tokens', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    destinationAddress: userWalletAddress,
-    amount: tokenAmount,
-    source: 'investment'
-  })
-});
-```
-
-#### **Transaction Status Monitoring**
-```typescript
-// Check transaction status
-const status = await fetch(`/api/check-transaction?hash=${txHash}`);
-const result = await status.json();
-```
-
-### **Key Platform Features**
-
-#### **🤖 Intelligent Auto-Minting**
-- **Primary**: Server-side minting using secure admin credentials
-- **Secondary**: Direct user wallet minting for privileged users  
-- **Fallback**: Background queue system for reliable processing
-- **Monitoring**: Real-time status updates and transaction tracking
-
-#### **👨‍💼 Admin Dashboard**
-- **Operation Monitoring**: View pending and completed minting operations
-- **Manual Intervention**: Process tokens manually when automatic systems fail
-- **System Health**: Check RPC connectivity and system status
-- **User Management**: Verify admin privileges and manage access
-
-#### **🎯 Investment Experience**
-- **Seamless Flow**: One-click investment with automatic token delivery
-- **Real-time Feedback**: Transaction status updates and confirmations
-- **Error Recovery**: Graceful handling of network or system issues
-- **Portfolio Integration**: Automatic balance updates upon token receipt
-
-#### **🛡️ Security & Compliance**
-- **Whitelist Management**: Address-based access control
-- **KYC Integration**: Compliance verification before transactions
-- **Audit Trail**: Complete transaction history and logging
-- **Secure Storage**: Admin credentials protected server-side only
-
----
-
-## 📦 **Smart Contract - Deployed & Active**
-
-### **✅ Deployment Status**
-- **Status**: Successfully Deployed & Initialized
-- **Date**: June 5, 2025
-- **Network**: Stellar Testnet
-- **Contract Explorer**: [View on Stellar Expert](https://stellar.expert/explorer/testnet/contract/CD22CFPEPDUXEBYLZ3LJA233UI5WRVQNT4UVWDKSOYONACWBQ5JMG5EX)
-
-### **📋 Contract Information**
-- **Initial Supply**: 1,000,000,000 AGRO tokens
-- **Current Valuation**: $1,000.00 
-- **Legal Document Hash**: `QmYwAPJzv5CZsnA4qWkc2bGhJ2mGmbkVr8sxCTBCPLGSoL`
-- **Contract Status**: Active (not paused)
-
-### **🔧 Administrative Tools**
-
-For administrators who need to interact with the contract directly:
-
-```powershell
-# Test contract functionality
-.\test-contract.ps1 -ContractId CD22CFPEPDUXEBYLZ3LJA233UI5WRVQNT4UVWDKSOYONACWBQ5JMG5EX
-
-# Verify automatic minting configuration
-.\verify-auto-minting.ps1
-
-# Manual token minting (if auto-minting fails)
-.\mint-tokens.ps1 -UserAddress "G..." -TokenAmount "100"
-
-# Whitelist a new user address
-.\whitelist-user.ps1 -UserAddress "G..."
-```
-
-### **📖 Additional Documentation**
-- **Deployment Details**: See `DEPLOYMENT_COMPLETE.md`
-- **Auto-Minting Setup**: See `AUTO_MINTING_CONFIG.md` 
-- **Admin Guide**: See `ADMIN_MINT_GUIDE.md`
-- **Usage Examples**: See `USAGE_GUIDE.md`
-
----
-
-## 🚀 **Platform Status & Getting Started**
-
-### **✅ Production Ready Features**
-- ✅ **Smart Contract Deployed** - Live on Stellar Testnet with full functionality
-- ✅ **Automatic Token Minting** - Multi-layered system with server-side, user wallet, and queue fallbacks
-- ✅ **Real Blockchain Integration** - Freighter wallet integration with actual Stellar transactions
-- ✅ **Admin Dashboard** - Complete monitoring and management interface
-- ✅ **Investment Flow** - End-to-end investment process with automatic token delivery
-- ✅ **Error Handling** - Comprehensive error recovery and user feedback
-- ✅ **Transaction Monitoring** - Real-time status updates and transaction tracking
-
-### **🎯 Quick Start Guide**
-
-#### **For Users**
-1. **Install Freighter Wallet**: Download from [freighter.app](https://freighter.app/)
-2. **Switch to Testnet**: Configure Freighter for Stellar Testnet
-3. **Fund Your Wallet**: Get testnet XLM from [Stellar Laboratory](https://laboratory.stellar.org/#account-creator)
-4. **Start Investing**: Visit the platform at `http://localhost:3000`
-
-#### **For Developers**
-```powershell
-# Clone and setup the frontend
-cd rwa-frontend
-npm install
-npm run dev
-
-# The platform will be available at http://localhost:3000
-```
-
-#### **For Administrators**
-```powershell
-# Configure automatic minting (first time setup)
-# 1. Edit .env.local with your admin credentials
-# 2. Verify configuration
-.\verify-auto-minting.ps1
-
-# 3. Start the platform
-cd rwa-frontend
-npm run dev
-
-# 4. Access admin dashboard at http://localhost:3000/admin-dashboard
-```
-
-### **🔧 Configuration**
-
-#### **Environment Setup**
-Create or update `.env.local` in the `rwa-frontend` directory:
 ```bash
 # Admin credentials for automatic minting
 CONTRACT_ADMIN_PUBLIC_KEY=GCNBHES7OAVHZU7W5IJBACKRPC6GPW4S7VETH4DMQEYAYDSRWI467CRO
@@ -380,40 +123,101 @@ NEXT_PUBLIC_BASE_URL=http://localhost:3000
 INTERNAL_API_KEY=your_secure_api_key_here
 ```
 
-### **🎮 Testing the Platform**
+---
 
-#### **Investment Flow Test**
-1. Connect Freighter wallet (testnet)
-2. Navigate to `/invest`
-3. Select investment amount
-4. Complete payment
-5. Verify automatic token minting
-6. Check your wallet balance
+### 🏗️ **Project Architecture**
 
-#### **Admin Functions Test**
-1. Connect with admin wallet
-2. Access `/admin-dashboard`
-3. Monitor pending minting operations
-4. Test manual minting if needed
+#### **Technology Stack**
 
-### **📊 Platform Architecture**
+| Component | Technology | Purpose |
+|-----------|------------|---------|
+| **Frontend** | Next.js 15 + TypeScript | React-based web application |
+| **Styling** | Tailwind CSS + shadcn/ui | Professional UI components |
+| **State Management** | Zustand | Lightweight state management |
+| **Blockchain** | Stellar SDK | Blockchain integration |
+| **Wallet** | Freighter API | Wallet connectivity |
+| **Icons** | Lucide React | Professional icon system |
 
-| Component | Status | Purpose |
-|-----------|--------|---------|
-| **Smart Contract** | ✅ Deployed | Token management and compliance |
-| **Frontend App** | ✅ Ready | User interface and wallet integration |
-| **Auto-Minting APIs** | ✅ Active | Automatic token delivery system |
-| **Admin Dashboard** | ✅ Available | Monitoring and management |
-| **Error Recovery** | ✅ Implemented | Fallback systems and queue processing |
+#### **Directory Structure**
+
+```
+rwa-frontend/
+├── app/                    # Next.js App Router
+│   ├── page.tsx           # Dashboard (main page)
+│   ├── marketplace/       # Asset marketplace
+│   ├── tokenize/          # Asset tokenization wizard
+│   ├── transfer/          # Token transfer interface
+│   ├── invest/            # Investment page with auto-minting
+│   ├── admin-dashboard/   # Admin monitoring and management
+│   ├── api/               # API endpoints for auto-minting
+│   └── ...
+├── components/
+│   ├── ui/                # shadcn/ui components
+│   └── layout/            # Layout components
+├── lib/
+│   ├── types.ts           # TypeScript definitions
+│   ├── stellar.ts         # Stellar SDK utilities
+│   └── ...
+└── public/                # Static assets
+```
 
 ---
 
-## 📞 **Support & Troubleshooting**
+### 🤖 **Automatic Token Minting System**
 
-### **🔧 Common Issues & Solutions**
+The AgroToken platform features a sophisticated multi-layered automatic token minting system that eliminates the need for manual admin intervention when users make investments.
 
-#### **Auto-Minting Issues**
-```powershell
+#### **How It Works**
+
+1. **Primary Path - Server-side API Minting**: Uses admin credentials to mint tokens automatically through `/api/mint-tokens`
+2. **Secondary Path - Direct User Wallet**: For users with admin privileges, tokens are minted directly 
+3. **Fallback Path - Background Queue**: Failed mints are queued for processing via `/api/queue-mint`
+
+#### **Security Features**
+
+- Admin credentials stored securely server-side only
+- Multi-layer authentication for API endpoints
+- Background processing with internal API security
+- Transaction verification and status monitoring
+
+---
+
+### 💼 **Smart Contract Integration**
+
+#### **Supported Operations**
+
+| Operation | Description | Status |
+|-----------|-------------|--------|
+| `get_balance` | Query user's token balance | ✅ Implemented |
+| `get_metadata` | Retrieve asset information | ✅ Implemented |
+| `transfer` | Send tokens between addresses | ✅ Implemented |
+| `check_compliance` | Verify KYC/whitelist status | ✅ Implemented |
+| `get_supply` | Get total token supply | ✅ Implemented |
+| `mint_simple` | Create new tokens (automated) | ✅ Auto-minting |
+| `mint` | Create new tokens (admin) | ✅ Implemented |
+| `pause` | Pause contract operations | ✅ Admin only |
+
+---
+
+### 🎯 **Platform Status & Getting Started**
+
+#### **✅ Production Ready Features**
+- ✅ **Smart Contract Deployed** - Live on Stellar Testnet with full functionality
+- ✅ **Automatic Token Minting** - Multi-layered system with server-side, user wallet, and queue fallbacks
+- ✅ **Real Blockchain Integration** - Freighter wallet integration with actual Stellar transactions
+- ✅ **Admin Dashboard** - Complete monitoring and management interface
+- ✅ **Investment Flow** - End-to-end investment process with automatic token delivery
+- ✅ **Error Handling** - Comprehensive error recovery and user feedback
+- ✅ **Transaction Monitoring** - Real-time status updates and transaction tracking
+
+---
+
+### 📞 **Support & Troubleshooting**
+
+#### **🔧 Common Issues & Solutions**
+
+**Auto-Minting Issues**
+```bash
 # Check auto-minting configuration
 .\verify-auto-minting.ps1
 
@@ -424,59 +228,19 @@ INTERNAL_API_KEY=your_secure_api_key_here
 .\mint-tokens.ps1 -UserAddress "G..." -TokenAmount "100"
 ```
 
-#### **Wallet Connection Issues**
+**Wallet Connection Issues**
 - Ensure Freighter wallet is installed and unlocked
 - Switch to Stellar Testnet in Freighter settings
 - Fund your testnet account with XLM
 
-#### **Transaction Failures**
+**Transaction Failures**
 - Check network connectivity to Stellar RPC
 - Verify account has sufficient XLM for fees
 - Ensure recipient address is whitelisted
 
-#### **Admin Functions**
-- Verify admin credentials in `.env.local`
-- Check admin account has sufficient XLM
-- Use admin dashboard for monitoring operations
-
-### **📋 Verification Tools**
-
-```powershell
-# Check overall system health
-.\verify-deployment.ps1
-
-# Test contract functions
-.\test-contract.ps1
-
-# Check auto-minting system
-.\check-auto-minting.ps1
-```
-
-### **📚 Documentation Resources**
-
-- **`AUTO_MINTING_CONFIG.md`** - Complete auto-minting setup guide
-- **`ADMIN_MINT_GUIDE.md`** - Manual minting procedures for admins
-- **`DEPLOYMENT_COMPLETE.md`** - Detailed deployment information
-- **`USAGE_GUIDE.md`** - Platform usage examples
-- **`STELLAR_DEPLOYMENT_GUIDE.md`** - Contract deployment procedures
-
-### **🚨 Getting Help**
-
-If you encounter issues:
-
-1. **Check Configuration**: Run verification scripts first
-2. **Review Documentation**: See the comprehensive guides above
-3. **Check Network Status**: Stellar testnet can experience delays
-4. **Admin Support**: Use the admin dashboard for operational issues
-5. **Error Logs**: Check console logs for detailed error information
-
-**Platform Status**: ✅ Production Ready  
-**Auto-Minting**: ✅ Fully Operational  
-**Smart Contract**: ✅ Deployed & Active
-
 ---
 
-## 🌱 **Vision & Impact**
+### 🌱 **Vision & Impact**
 
 AgroToken Farm Investment Platform bridges the gap between traditional agriculture and modern blockchain technology, enabling:
 
@@ -486,26 +250,274 @@ AgroToken Farm Investment Platform bridges the gap between traditional agricultu
 
 ---
 
+<a name="türkçe"></a>
+## 🇹🇷 Türkçe
+
+Stellar blockchain üzerinde tarımsal varlık tokenizasyonu ve yatırım platformu. Bu platform, çiftçilerin tarımsal varlıklarını tokenize etmesini sağlar ve yatırımcılara sürdürülebilir tarıma yatırım fırsatları sunar.
+
+### 🎯 **Proje Genel Bakış**
+
+AgroToken Farm Investment Platform, tarımsal varlıkları Stellar blockchain üzerinde tokenize ederek tarıma erişimi demokratikleştirir. Çiftçiler arazilerini satmadan finansmana erişebilir, yatırımcılar da sürdürülebilir tarıma güvenli ve şeffaf yatırım yapabilir.
+
+### **🌟 Ana Özellikler**
+
+#### **Çiftçiler İçin**
+- 🚜 **Çiftlik Tokenizasyonu** - Tarımsal varlıkları ticarete konu çiftlik hisselerine dönüştürme
+- 💰 **Sermayeye Erişim** - Çiftlik sahipliğini koruyarak finansman sağlama
+- 📋 **Uyumluluk Yönetimi** - Organik sertifikasyon ve tarımsal uyumluluk araçları
+- 🌱 **Sürdürülebilirlik Odağı** - Organik ve sürdürülebilir tarım uygulamalarına destek
+
+#### **Yeni Özellikler**
+- ✨ **Otomatik Token Basımı** - Yatırım yapıldığında tokenlerin otomatik olarak basılması
+- 🔄 **Çok Katmanlı Basım Yaklaşımı** - Sunucu tarafı, kullanıcı cüzdanı ve arka plan kuyruğu yedekleri
+- 📊 **İşlem Durumu İzleme** - Token basım işlemleri için gerçek zamanlı durum güncellemeleri
+- 🛡️ **Admin Paneli** - Token basım işlemlerini izleme ve yönetme
+
+#### **Yatırımcılar İçin**
+- 💼 **Çiftlik Portföy Paneli** - Gerçek zamanlı değerlemeler ile tarımsal yatırımların genel görünümü
+- 🏪 **Tarımsal Pazar Yeri** - Çiftlik yatırım fırsatlarını keşfetme ve filtreleme
+- 💸 **Güvenli Hisse Transferleri** - Uyumluluk doğrulaması ile çiftlik hisselerini gönderme/alma
+- 📊 **Performans Takibi** - Verim, organik sertifikasyon durumu ve hasat projeksiyonlarını izleme
+- 🔐 **Cüzdan Entegrasyonu** - Freighter cüzdan bağlantısı
+
+### **📱 Platform Özellikleri**
+- 🌾 **Çoklu Çiftlik Desteği** - Tarla, hayvancılık, süt çiftlikleri, gıda işleme
+- ⚡ **Stellar Entegrasyonu** - Hızlı, düşük maliyetli blockchain işlemleri
+- 🛡️ **Organik Uyumluluk** - Yerleşik organik sertifikasyon ve yatırımcı doğrulaması
+- 📱 **Duyarlı Tasarım** - Tarımsal yatırımlar için optimize edilmiş profesyonel UI
+
+---
+
+### 🔑 **Stellar Network Bilgileri**
+
+#### **Smart Contract Detayları**
+- **Contract ID**: `CD22CFPEPDUXEBYLZ3LJA233UI5WRVQNT4UVWDKSOYONACWBQ5JMG5EX`
+- **Network**: Stellar Testnet
+- **Asset**: AgroToken Farm Investment (AGRO)
+- **Type**: Tarımsal varlık tokenizasyon platformu
+
+#### **Public Key Bilgileri**
+```
+Admin Public Key: GCNBHES7OAVHZU7W5IJBACKRPC6GPW4S7VETH4DMQEYAYDSRWI467CRO
+```
+
+> **Not**: Bu public key, contract admin yetkilerine sahiptir ve platform yönetimi için kullanılır. Secret key bilgileri güvenlik nedeniyle paylaşılmaz.
+
+#### **Network Konfigürasyonu**
+```bash
+# Stellar Testnet
+RPC_URL=https://soroban-testnet.stellar.org:443
+HORIZON_URL=https://horizon-testnet.stellar.org
+NETWORK_PASSPHRASE="Test SDF Network ; September 2015"
+
+# Contract Explorer
+https://stellar.expert/explorer/testnet/contract/CD22CFPEPDUXEBYLZ3LJA233UI5WRVQNT4UVWDKSOYONACWBQ5JMG5EX
+```
+
+---
+
+### 🚀 **Hızlı Başlangıç**
+
+#### **Ön Gereksinimler**
+- Node.js 18+ yüklü
+- [Freighter Wallet](https://freighter.app/) tarayıcı uzantısı
+- Geliştirme için Stellar Testnet erişimi
+
+#### **Kurulum**
+
+```bash
+# Repository'yi klonlayın
+git clone https://github.com/yusatrn/agrotoken-farm-investment.git
+cd agrotoken-farm-investment
+
+# Frontend dizinine gidin
+cd rwa-frontend
+
+# Bağımlılıkları yükleyin
+npm install
+
+# Geliştirme sunucusunu başlatın
+npm run dev
+```
+
+`http://localhost:3000` adresini ziyaret ederek AgroToken platformuna erişin.
+
+#### **Çevre Değişkenleri Konfigürasyonu**
+
+`.env.local` dosyasını `rwa-frontend` dizininde oluşturun:
+
+```bash
+# Admin kimlik bilgileri (otomatik basım için)
+CONTRACT_ADMIN_PUBLIC_KEY=GCNBHES7OAVHZU7W5IJBACKRPC6GPW4S7VETH4DMQEYAYDSRWI467CRO
+CONTRACT_ADMIN_SECRET_KEY=YOUR_ACTUAL_SECRET_KEY_HERE
+
+# Network konfigürasyonu
+STELLAR_NETWORK=testnet
+NEXT_PUBLIC_BASE_URL=http://localhost:3000
+
+# API güvenliği
+INTERNAL_API_KEY=your_secure_api_key_here
+```
+
+---
+
+### 🏗️ **Proje Mimarisi**
+
+#### **Teknoloji Yığını**
+
+| Bileşen | Teknoloji | Amaç |
+|---------|-----------|------|
+| **Frontend** | Next.js 15 + TypeScript | React tabanlı web uygulaması |
+| **Styling** | Tailwind CSS + shadcn/ui | Profesyonel UI bileşenleri |
+| **State Management** | Zustand | Hafif state yönetimi |
+| **Blockchain** | Stellar SDK | Blockchain entegrasyonu |
+| **Wallet** | Freighter API | Cüzdan bağlantısı |
+| **Icons** | Lucide React | Profesyonel ikon sistemi |
+
+---
+
+### 🤖 **Otomatik Token Basım Sistemi**
+
+AgroToken platformu, kullanıcılar yatırım yaptıklarında manuel admin müdahalesine gerek duymayan gelişmiş çok katmanlı otomatik token basım sistemi içerir.
+
+#### **Nasıl Çalışır**
+
+1. **Birincil Yol - Sunucu tarafı API Basımı**: `/api/mint-tokens` üzerinden admin kimlik bilgileri kullanarak otomatik token basımı
+2. **İkincil Yol - Doğrudan Kullanıcı Cüzdanı**: Admin yetkilerine sahip kullanıcılar için doğrudan basım
+3. **Yedek Yol - Arka Plan Kuyruğu**: Başarısız basımlar `/api/queue-mint` üzerinden işleme alınır
+
+#### **Güvenlik Özellikleri**
+
+- Admin kimlik bilgileri yalnızca sunucu tarafında güvenli şekilde saklanır
+- API endpoints için çok katmanlı kimlik doğrulama
+- İç API güvenliği ile arka plan işleme
+- İşlem doğrulama ve durum izleme
+
+---
+
+### 💼 **Smart Contract Entegrasyonu**
+
+#### **Desteklenen İşlemler**
+
+| İşlem | Açıklama | Durum |
+|-------|----------|-------|
+| `get_balance` | Kullanıcının token bakiyesini sorgulama | ✅ Uygulandı |
+| `get_metadata` | Varlık bilgilerini alma | ✅ Uygulandı |
+| `transfer` | Adresler arası token gönderimi | ✅ Uygulandı |
+| `check_compliance` | KYC/whitelist durum doğrulaması | ✅ Uygulandı |
+| `get_supply` | Toplam token arzını alma | ✅ Uygulandı |
+| `mint_simple` | Yeni token oluşturma (otomatik) | ✅ Otomatik basım |
+| `mint` | Yeni token oluşturma (admin) | ✅ Uygulandı |
+| `pause` | Contract işlemlerini durdurma | ✅ Sadece admin |
+
+---
+
+### 🎯 **Platform Durumu & Başlangıç**
+
+#### **✅ Üretime Hazır Özellikler**
+- ✅ **Smart Contract Dağıtıldı** - Stellar Testnet'te tam işlevsellikle canlı
+- ✅ **Otomatik Token Basımı** - Sunucu tarafı, kullanıcı cüzdanı ve kuyruk yedekleri ile çok katmanlı sistem
+- ✅ **Gerçek Blockchain Entegrasyonu** - Gerçek Stellar işlemleri ile Freighter cüzdan entegrasyonu
+- ✅ **Admin Paneli** - Tam izleme ve yönetim arayüzü
+- ✅ **Yatırım Akışı** - Otomatik token teslimatı ile uçtan uca yatırım süreci
+- ✅ **Hata İşleme** - Kapsamlı hata kurtarma ve kullanıcı geri bildirimi
+- ✅ **İşlem İzleme** - Gerçek zamanlı durum güncellemeleri ve işlem takibi
+
+---
+
+### 📞 **Destek & Sorun Giderme**
+
+#### **🔧 Yaygın Sorunlar & Çözümler**
+
+**Otomatik Basım Sorunları**
+```bash
+# Otomatik basım konfigürasyonunu kontrol edin
+.\verify-auto-minting.ps1
+
+# Otomatik basım endpoints'lerini test edin
+.\test-auto-minting.ps1
+
+# Otomatik başarısız olursa manuel token basımı
+.\mint-tokens.ps1 -UserAddress "G..." -TokenAmount "100"
+```
+
+**Cüzdan Bağlantı Sorunları**
+- Freighter cüzdan yüklü ve kilidi açık olduğundan emin olun
+- Freighter ayarlarında Stellar Testnet'e geçin
+- Testnet hesabınızı XLM ile fonlayın
+
+**İşlem Başarısızlıkları**
+- Stellar RPC'ye ağ bağlantısını kontrol edin
+- Hesabın ücretler için yeterli XLM'ye sahip olduğunu doğrulayın
+- Alıcı adresinin whitelist'te olduğundan emin olun
+
+---
+
+### 🌱 **Vizyon & Etki**
+
+AgroToken Farm Investment Platform, geleneksel tarım ile modern blockchain teknolojisi arasındaki köprüyü kurar ve şunları sağlar:
+
+- **Çiftçiler İçin**: Çiftlik sahipliğini koruyarak küresel sermayeye erişim
+- **Yatırımcılar İçin**: Şeffaf getirilerle sürdürülebilir tarıma doğrudan katılım
+- **Sektör İçin**: İzlenebilir tedarik zinciri ve sürdürülebilir tarım teşvikleri
+
+---
+
 <div align="center">
 
 **🌾 Built with ❤️ for the future of sustainable agriculture 🌾**
 
 *"From farm to blockchain - Growing sustainable investments for tomorrow's agriculture"*
 
-**[Live Demo](link) • [Documentation](link) • [Community](link) • [Contact](link)**
+**Sürdürülebilir tarımın geleceği için ❤️ ile inşa edildi**
+
+*"Çiftlikten blockchain'e - Yarının tarımı için sürdürülebilir yatırımlar büyütüyoruz"*
+
+**[Live Demo](http://localhost:3000) • [Documentation](./DEPLOYMENT_COMPLETE.md) • [Community](https://github.com/yusatrn/agrotoken-farm-investment) • [Contact](mailto:yusatrn@example.com)**
 
 </div>
 
 ---
 
-### 📄 **License**
+### 📄 **License / Lisans**
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-### 🤝 **Contributing**
+Bu proje MIT Lisansı altında lisanslanmıştır - detaylar için [LICENSE](LICENSE) dosyasına bakın.
 
-Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
+### 🤝 **Contributing / Katkıda Bulunma**
 
-### ⭐ **Support**
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+Katkılar memnuniyetle karşılanır! Lütfen Pull Request göndermekten çekinmeyin.
+
+### ⭐ **Support / Destek**
 
 If you find this project helpful, please give it a star ⭐ on GitHub!
+
+Bu projeyi faydalı bulduysanız, lütfen GitHub'da bir yıldız ⭐ verin!
+
+---
+
+### 🔐 **Security Notes / Güvenlik Notları**
+
+**English:**
+- **Secret Keys**: Never store secret keys in the repository
+- **Environment Variables**: Store sensitive information in `.env.local` file
+- **Production**: Use proper key management in production environment
+- **Network**: Conduct appropriate security audits for mainnet usage
+
+**Türkçe:**
+- **Secret Key'ler**: Hiçbir zaman secret key'leri repository'de saklamayın
+- **Environment Variables**: Hassas bilgileri `.env.local` dosyasında saklayın
+- **Production**: Production ortamında mutlaka güvenli key yönetimi kullanın
+- **Network**: Mainnet kullanımı için uygun security audit'ler yapın
+
+> **Warning / Uyarı**: This platform currently operates on Stellar Testnet for testing purposes. Additional security measures should be taken for production use.
+>
+> Bu platform şu anda Stellar Testnet üzerinde test amaçlı olarak çalışmaktadır. Production kullanımı için ek güvenlik önlemleri alınmalıdır.
+
+---
+
+**Last Updated / Son Güncelleme**: 2025-06-07  
+**Repository Owner / Repository Sahibi**: [@yusatrn](https://github.com/yusatrn)
