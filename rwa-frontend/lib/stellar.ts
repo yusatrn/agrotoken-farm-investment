@@ -43,16 +43,16 @@ export const formatTokenAmount = (amount: string | number, decimals = 0): string
   return formatted;
 };
 
-// Convert display amount to contract amount (multiply by 10^7)
+// Convert display amount to contract amount (raw numbers - no scaling needed)
 export const toContractAmount = (displayAmount: string | number): string => {
   const num = typeof displayAmount === 'string' ? parseFloat(displayAmount) : displayAmount;
-  return Math.floor(num * Math.pow(10, 7)).toString();
+  return Math.floor(num).toString();
 };
 
-// Convert contract amount to display amount (divide by 10^7)
+// Convert contract amount to display amount (raw numbers - no scaling needed)
 export const toDisplayAmount = (contractAmount: string | number): number => {
   const num = typeof contractAmount === 'string' ? parseInt(contractAmount) : contractAmount;
-  return num / Math.pow(10, 7);
+  return num;
 };
 
 // Format currency values

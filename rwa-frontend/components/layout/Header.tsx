@@ -106,49 +106,11 @@ export function Header() {
               className="text-sm font-medium transition-colors hover:text-primary"
             >
               List Your Farm
-            </Link>
-            <Link 
+            </Link>            <Link 
               href="/transfer" 
               className="text-sm font-medium transition-colors hover:text-primary"
             >
               Share Transfer
-            </Link>            <Link 
-              href="/debug" 
-              className="text-xs font-mono text-muted-foreground transition-colors hover:text-primary"
-            >
-              Debug
-            </Link>            <Link 
-              href="/diagnostics" 
-              className="text-xs font-mono text-muted-foreground transition-colors hover:text-primary"
-            >
-              🔬 Diagnostics
-            </Link>            <Link 
-              href="/payment-debug" 
-              className="text-xs font-mono text-muted-foreground transition-colors hover:text-primary"
-            >
-              🔧 Payment Debug
-            </Link>
-            <Link 
-              href="/address-test" 
-              className="text-xs font-mono text-muted-foreground transition-colors hover:text-primary"
-            >
-              🎯 Address Test
-            </Link>            <Link 
-              href="/payment-validation" 
-              className="text-xs font-mono text-muted-foreground transition-colors hover:text-primary"
-            >
-              🧪 Payment Validation
-            </Link>            <Link 
-              href="/production-test" 
-              className="text-xs font-mono text-muted-foreground transition-colors hover:text-primary"
-            >
-              🚀 Production Test
-            </Link>
-            <Link 
-              href="/platform-status" 
-              className="text-xs font-mono text-muted-foreground transition-colors hover:text-primary"
-            >
-              📊 Platform Status
             </Link>
           </nav>
         </div>

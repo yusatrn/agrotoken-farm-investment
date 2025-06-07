@@ -107,16 +107,7 @@ export default function InvestmentPage() {
     } catch (error) {
       console.error('Failed to load portfolio:', error);
     }
-  };
-  const handleInvestment = async () => {
-    console.log('🚀 Investment button clicked!', {
-      isConnected,
-      address,
-      selectedPackage,
-      investmentAmount,
-      selectedCurrency
-    });
-
+  };  const handleInvestment = async () => {
     if (!isConnected || !address || !selectedPackage || !investmentAmount) {
       const missing = [];
       if (!isConnected) missing.push('wallet connection');
@@ -125,7 +116,6 @@ export default function InvestmentPage() {
       if (!investmentAmount) missing.push('investment amount');
       
       const message = `Please complete the following: ${missing.join(', ')}`;
-      console.warn('❌ Investment validation failed:', message);
       alert(message);
       return;
     }
@@ -139,7 +129,6 @@ export default function InvestmentPage() {
       
       if (userAmount < minAmount) {
         const message = `Minimum investment is ${minInvestment} ${selectedCurrency}. You entered ${investmentAmount} ${selectedCurrency}.`;
-        console.warn('❌ Investment amount too low:', message);
         alert(message);
         return;
       }
@@ -148,15 +137,12 @@ export default function InvestmentPage() {
     setIsProcessing(true);
     
     try {
-      console.log('💰 Starting payment processing...');
       const result = await paymentProcessor.processInvestmentPayment(
         address,
         selectedPackage,
         investmentAmount,
         selectedCurrency
-      );      console.log('💳 Payment result:', result);
-
-      if (result.success) {
+      );      if (result.success) {
         // Use state to show proper success message instead of alert
         setSuccessMessage({
           title: 'Investment Successful!',
@@ -167,8 +153,6 @@ export default function InvestmentPage() {
           ],
           note: result.note || ''
         });
-        
-        console.log('✅ Investment successful:', result);
         
         // Check for transaction hash to monitor token minting
         if (result.transactionHash) {
@@ -239,10 +223,9 @@ export default function InvestmentPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="text-center p-4 bg-green-50 rounded-lg">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">                  <div className="text-center p-4 bg-green-50 rounded-lg">
                     <div className="text-2xl font-bold text-green-600">
-                      ${parseFloat(portfolioValue.totalValue) / 10000000}
+                      ${parseFloat(portfolioValue.totalValue).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}
                     </div>
                     <div className="text-sm text-gray-600">Total Value</div>
                   </div>

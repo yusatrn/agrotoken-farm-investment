@@ -94,4 +94,39 @@ export const formatTokenAmount = (amount: string | number, decimals = 0): string
 
 ---
 
+# Balance Display Fixes Summary
+
+## ✅ COMPLETED FIXES
+
+### 1. Token Balance Display Fix (Primary Issue)
+**Problem:** User balances showed as "0 GVOF" instead of correct values like "304 AGRO"
+**Root Cause:** `formatTokenAmount` incorrectly divided by 10^7, but contract stores raw numbers
+**Fix Applied:** 
+- Updated `formatTokenAmount` in `lib/stellar.ts` to handle raw numbers correctly
+- Changed asset symbol from "GVOF" to "AGRO" throughout codebase
+- Files modified: `lib/stellar.ts`, `lib/contract.ts`, `lib/payment.ts`
+
+### 2. Portfolio Value Display Fix 
+**Problem:** Portfolio value showed "$0.0000316" instead of "$304"
+**Root Cause:** Incorrect division by 10,000,000 in investment page
+**Fix Applied:**
+- Removed division and added proper number formatting in `app/invest/page.tsx`
+- Portfolio value now displays correctly using `toLocaleString`
+
+### 3. Farm Token USD Value Display Fix (NEW)
+**Problem:** Farm token holdings showed "≈ $94,800" for 316 AGRO tokens
+**Root Cause:** Hardcoded 300x multiplier in main page farm token display
+**Fix Applied:**
+- Removed incorrect 300x multiplier in `app/page.tsx` 
+- Changed to 1:1 ratio (1 AGRO = $1 USD)
+- 316 AGRO now shows "≈ $316" instead of "≈ $94,800"
+
+### 4. Transfer Amount Conversion Fix (NEW)
+**Problem:** Transfer attempts failed with "Required: 120000000" when trying to transfer 12 tokens
+**Root Cause:** `toContractAmount` function incorrectly multiplied by 10^7 (12 → 120,000,000)
+**Fix Applied:**
+- Updated `toContractAmount` in `lib/stellar.ts` to use raw numbers (no multiplication)
+- Updated `toDisplayAmount` to match (no division)
+- Transfer amounts now work correctly with raw contract numbers
+
 **✅ CRITICAL ISSUE RESOLVED - Frontend balance display now works correctly!**

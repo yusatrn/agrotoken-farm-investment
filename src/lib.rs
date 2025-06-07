@@ -62,22 +62,40 @@ impl SimpleRWAContract {
         let current_supply: i128 = env.storage().instance().get(&SUPPLY).unwrap_or(0);
         env.storage().instance().set(&SUPPLY, &(current_supply + amount));
     }
-    
-    /// Transfer tokens
+      /// Transfer tokens
     pub fn transfer(env: Env, from: Address, to: Address, amount: i128) {
         from.require_auth();
         
+        // Check if amount is valid
+        if amount <= 0 {
+            panic!("Transfer amount must be positive");
+        }
+        
+        // Check if contract is initialized
+        if !env.storage().instance().has(&ADMIN) {
+            panic!("Contract not initialized");
+        }
+        
+        // Get balances map - create new if doesn't exist
         let mut balances: Map<Address, i128> = 
             env.storage().instance().get(&BALANCES).unwrap_or(Map::new(&env));
+        
+        // Get sender balance
         let from_balance = balances.get(from.clone()).unwrap_or(0);
         
+        // Check sufficient balance
         if from_balance < amount {
             panic!("Insufficient balance");
         }
         
+        // Get recipient balance
         let to_balance = balances.get(to.clone()).unwrap_or(0);
+        
+        // Update balances
         balances.set(from, from_balance - amount);
         balances.set(to, to_balance + amount);
+        
+        // Save updated balances
         env.storage().instance().set(&BALANCES, &balances);
     }
     

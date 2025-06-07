@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useWalletStore } from '@/stores/wallet';
 import { useContractStore } from '@/stores/contract';
 import { ComplianceData } from '@/lib/types';
+import { checkComplianceStatus, getComplianceRequirements, ComplianceStatus } from '@/lib/compliance';
 import { Header } from '@/components/layout/Header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -33,27 +34,32 @@ export default function TransferPage() {
     isLoading,
     fetchUserData,
     fetchContractData
-  } = useContractStore();
-  const [recipient, setRecipient] = useState('');
+  } = useContractStore();  const [recipient, setRecipient] = useState('');
   const [amount, setAmount] = useState('');
   const [isValidRecipient, setIsValidRecipient] = useState(false);
   const [recipientCompliance, setRecipientCompliance] = useState<ComplianceData | null>(null);
-
+  const [senderComplianceStatus, setSenderComplianceStatus] = useState<ComplianceStatus | null>(null);
+  const [recipientComplianceStatus, setRecipientComplianceStatus] = useState<ComplianceStatus | null>(null);
   // Load data on mount and when wallet connects
   useEffect(() => {
     fetchContractData();
     if (isConnected && address) {
       fetchUserData(address);
+      // Check sender compliance status
+      checkComplianceStatus(address).then(setSenderComplianceStatus);
     }
   }, [isConnected, address, fetchContractData, fetchUserData]);
-
-  // Validate recipient address
+  // Validate recipient address and check compliance
   useEffect(() => {
     if (recipient) {
       const valid = isValidStellarAddress(recipient);
       setIsValidRecipient(valid);
       
-      if (valid) {        // In a real app, this would check recipient compliance
+      if (valid) {
+        // Check recipient compliance status
+        checkComplianceStatus(recipient).then(setRecipientComplianceStatus);
+        
+        // In a real app, this would check recipient compliance
         setRecipientCompliance({
           kyc_verified: true,
           accredited_investor: false,
@@ -62,33 +68,59 @@ export default function TransferPage() {
         });
       } else {
         setRecipientCompliance(null);
+        setRecipientComplianceStatus(null);
       }
     } else {
       setIsValidRecipient(false);
       setRecipientCompliance(null);
+      setRecipientComplianceStatus(null);
     }
   }, [recipient]);
 
   const handleMaxAmount = () => {
     setAmount(formatTokenAmount(userBalance));
   };
-
   const canTransfer = () => {
     if (!isConnected || !address) return false;
-    if (!isWhitelisted) return false;
+    if (!senderComplianceStatus?.isCompliant) return false;
     if (!isValidRecipient) return false;
+    if (!recipientComplianceStatus?.isCompliant) return false;
     if (!amount || parseFloat(amount) <= 0) return false;
     if (parseFloat(amount) > parseFloat(formatTokenAmount(userBalance))) return false;
     return true;
   };
-
   const handleTransfer = async () => {
     if (!canTransfer() || !address) return;
 
     try {
+      // Additional validation before transfer
+      const currentBalance = userBalance ? formatTokenAmount(userBalance) : '0';
+      const transferAmount = parseFloat(amount);
+      const availableBalance = parseFloat(currentBalance);
+
+      console.log('Transfer validation:', {
+        transferAmount,
+        availableBalance,
+        userBalance,
+        contractAmount: toContractAmount(amount)
+      });
+
+      if (availableBalance === 0) {
+        toast.error('You have no tokens to transfer. Please acquire tokens first.');
+        return;
+      }
+
+      if (transferAmount > availableBalance) {
+        toast.error(`Insufficient balance. You have ${currentBalance} AGRO but trying to transfer ${amount} AGRO.`);
+        return;
+      }
+
       const contractAmount = toContractAmount(amount);
+      console.log('Executing transfer with contract amount:', contractAmount);
+      
       const success = await transfer(address, recipient, contractAmount);
-        if (success) {
+      
+      if (success) {
         toast.success('Transfer completed successfully!');
         setAmount('');
         setRecipient('');
@@ -97,7 +129,24 @@ export default function TransferPage() {
       }
     } catch (error) {
       console.error('Transfer error:', error);
-      toast.error('Transfer failed. Please check the details and try again.');
+      
+      // Provide more specific error messages
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      
+      if (errorMessage.includes('Insufficient balance')) {
+        toast.error('Transfer failed: Insufficient balance in your account.');      } else if (errorMessage.includes('UnreachableCodeReached')) {
+        toast.error('Transfer failed: Contract execution error. This may be due to compliance requirements.');
+      } else if (errorMessage.includes('KYC verification')) {
+        toast.error('Transfer failed: KYC verification required for both sender and recipient.');
+      } else if (errorMessage.includes('compliance has expired')) {
+        toast.error('Transfer failed: Compliance verification has expired. Please renew your KYC.');
+      } else if (errorMessage.includes('not whitelisted')) {
+        toast.error('Transfer failed: Address not authorized for transfers.');
+      } else if (errorMessage.includes('User declined')) {
+        toast.error('Transfer cancelled by user.');
+      } else {
+        toast.error(`Transfer failed: ${errorMessage}`);
+      }
     }
   };
 
@@ -141,17 +190,29 @@ export default function TransferPage() {
           <Alert>
             <Info className="h-4 w-4" />
             <AlertDescription>
-              <div className="flex items-center justify-between">
-                <span>
-                  Your certification status: {' '}
-                  <Badge variant={isWhitelisted ? 'default' : 'destructive'}>
-                    {isWhitelisted ? 'Organic Certified' : 'Pending Verification'}
-                  </Badge>
-                </span>
-                {compliance?.kyc_verified && (
-                  <Badge variant="outline" className="text-xs">
-                    Agricultural Compliance Complete
-                  </Badge>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span>
+                    Your certification status: {' '}
+                    <Badge variant={senderComplianceStatus?.isCompliant ? 'default' : 'destructive'}>
+                      {senderComplianceStatus?.isCompliant ? 'Fully Compliant' : 'Compliance Required'}
+                    </Badge>
+                  </span>
+                  {compliance?.kyc_verified && (
+                    <Badge variant="outline" className="text-xs">
+                      KYC Verified
+                    </Badge>
+                  )}
+                </div>
+                {senderComplianceStatus && !senderComplianceStatus.isCompliant && (
+                  <div className="text-sm space-y-1">
+                    {senderComplianceStatus.issues.map((issue, index) => (
+                      <div key={index} className="text-yellow-600">⚠️ {issue}</div>
+                    ))}
+                    {senderComplianceStatus.recommendations.map((rec, index) => (
+                      <div key={index} className="text-blue-600">💡 {rec}</div>
+                    ))}
+                  </div>
                 )}
               </div>
             </AlertDescription>
@@ -200,19 +261,35 @@ export default function TransferPage() {
                 />
                 {recipient && !isValidRecipient && (
                   <p className="text-sm text-red-600">Invalid Stellar address format</p>
-                )}
-                {isValidRecipient && recipientCompliance && (
-                  <div className="flex items-center gap-2 text-sm text-green-600">
-                    <CheckCircle className="h-4 w-4" />
-                    Recipient is verified and whitelisted
+                )}                {isValidRecipient && recipientComplianceStatus && (
+                  <div className="mt-2 p-2 bg-muted rounded text-sm">
+                    <div className="flex items-center gap-2">
+                      {recipientComplianceStatus.isCompliant ? (
+                        <CheckCircle className="h-4 w-4 text-green-600" />
+                      ) : (
+                        <AlertCircle className="h-4 w-4 text-yellow-600" />
+                      )}
+                      <span>
+                        Recipient Status: {' '}
+                        <Badge variant={recipientComplianceStatus.isCompliant ? 'default' : 'secondary'}>
+                          {recipientComplianceStatus.isCompliant ? 'Compliant' : 'Issues Found'}
+                        </Badge>
+                      </span>
+                    </div>
+                    {!recipientComplianceStatus.isCompliant && (
+                      <div className="mt-1 space-y-1">
+                        {recipientComplianceStatus.issues.map((issue, index) => (
+                          <div key={index} className="text-yellow-600 text-xs">⚠️ {issue}</div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
 
-              {/* Amount */}
-              <div className="space-y-2">
+              {/* Amount */}              <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="amount">Amount (LAPT)</Label>
+                  <Label htmlFor="amount">Amount (AGRO)</Label>
                   <Button 
                     variant="ghost" 
                     size="sm" 
@@ -240,10 +317,9 @@ export default function TransferPage() {
               {amount && isValidRecipient && (
                 <div className="space-y-3 p-4 bg-muted rounded-lg">
                   <h4 className="font-medium">Transaction Summary</h4>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
+                  <div className="space-y-2 text-sm">                    <div className="flex justify-between">
                       <span>Amount:</span>
-                      <span className="font-mono">{amount} LAPT</span>
+                      <span className="font-mono">{amount} AGRO</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Estimated Network Fee:</span>
@@ -274,14 +350,31 @@ export default function TransferPage() {
                     <ArrowRight className="h-4 w-4 ml-2" />
                   </>
                 )}
-              </Button>
-
-              {/* Warnings */}
-              {!isWhitelisted && (
+              </Button>              {/* Warnings */}
+              {!senderComplianceStatus?.isCompliant && (
                 <Alert variant="destructive">
                   <AlertCircle className="h-4 w-4" />
                   <AlertDescription>
-                    Your address is not whitelisted. You cannot transfer tokens until compliance verification is complete.
+                    <div className="space-y-1">
+                      <div>You cannot transfer tokens due to compliance issues:</div>
+                      {senderComplianceStatus?.issues.map((issue, index) => (
+                        <div key={index} className="text-sm">• {issue}</div>
+                      ))}
+                    </div>
+                  </AlertDescription>
+                </Alert>
+              )}
+              
+              {recipientComplianceStatus && !recipientComplianceStatus.isCompliant && (
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>
+                    <div className="space-y-1">
+                      <div>Recipient cannot receive tokens due to compliance issues:</div>
+                      {recipientComplianceStatus.issues.map((issue, index) => (
+                        <div key={index} className="text-sm">• {issue}</div>
+                      ))}
+                    </div>
                   </AlertDescription>
                 </Alert>
               )}

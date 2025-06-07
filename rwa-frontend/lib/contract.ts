@@ -383,31 +383,17 @@ class RealContractClient implements ContractMethods {
       return '15000000000000000'; // Fallback to mock
     }
   }
-
   async isWhitelisted(address: string): Promise<boolean> {
     try {
       console.log(`Checking whitelist status for ${address}`);
-        const contract = new Contract(this.contractId);
-      const sourceKeypair = Keypair.random();
-      const sourceAccount = new Account(sourceKeypair.publicKey(), '0');
       
-      const transaction = new TransactionBuilder(sourceAccount, {
-        fee: BASE_FEE,
-        networkPassphrase: this.getNetworkPassphrase(),
-      })
-        .addOperation(
-          contract.call('is_whitelisted', Address.fromString(address).toScVal())
-        )
-        .setTimeout(300)
-        .build();const simulationResult = await this.server.simulateTransaction(transaction);
-      
-      if (rpc.Api.isSimulationSuccess(simulationResult) && simulationResult.result?.retval) {
-        const whitelisted = scValToNative(simulationResult.result.retval);
-        return Boolean(whitelisted);
+      // Simple contract doesn't have whitelist functionality - allow all valid addresses
+      if (address.startsWith('G') && address.length === 56) {
+        console.log('✅ Address allowed (simple contract - no whitelist)');
+        return true;
       }
-
-      // Mock: addresses containing 'G' are whitelisted (typical Stellar addresses)
-      return address.startsWith('G') && address.length === 56;
+      
+      return false;
     } catch (error) {
       console.error('Error checking whitelist:', error);
       return address.startsWith('G') && address.length === 56;
@@ -498,21 +484,40 @@ class RealContractClient implements ContractMethods {
       const transferAmount = BigInt(amount);
       if (transferAmount <= 0) {
         throw new Error('Transfer amount must be positive');
-      }
-
-      // Check if both addresses are whitelisted
-      console.log('Validating whitelist status...');
-      const [fromWhitelisted, toWhitelisted] = await Promise.all([
+      }      // Check if both addresses are whitelisted and compliant
+      console.log('Validating whitelist and compliance status...');
+      const [fromWhitelisted, toWhitelisted, fromCompliance, toCompliance] = await Promise.all([
         this.isWhitelisted(from),
-        this.isWhitelisted(to)
+        this.isWhitelisted(to),
+        this.getCompliance(from),
+        this.getCompliance(to)
       ]);
 
       if (!fromWhitelisted) {
-        throw new Error('Sender address is not whitelisted');
+        throw new Error('Sender address is not whitelisted for transfers');
       }
 
       if (!toWhitelisted) {
-        throw new Error('Recipient address is not whitelisted');
+        throw new Error('Recipient address is not whitelisted for transfers');
+      }
+
+      // Check compliance requirements (required for the deployed RWA contract)
+      if (!fromCompliance || !fromCompliance.kyc_verified) {
+        throw new Error('Sender must complete KYC verification before transferring tokens');
+      }
+
+      if (!toCompliance || !toCompliance.kyc_verified) {
+        throw new Error('Recipient must complete KYC verification before receiving tokens');
+      }
+
+      // Check if compliance has expired
+      const currentTime = Math.floor(Date.now() / 1000);
+      if (fromCompliance.compliance_expiry < currentTime) {
+        throw new Error('Sender compliance has expired. Please renew KYC verification');
+      }
+
+      if (toCompliance.compliance_expiry < currentTime) {
+        throw new Error('Recipient compliance has expired. Please ask them to renew KYC verification');
       }
 
       // Check sender balance
@@ -522,13 +527,12 @@ class RealContractClient implements ContractMethods {
 
       if (balanceAmount < transferAmount) {
         throw new Error(`Insufficient balance. Available: ${fromBalance}, Required: ${amount}`);
-      }
-
-      // Prepare contract arguments
+      }      // Prepare contract arguments for the deployed RWA contract
+      // The deployed contract expects: transfer({from: string, to: string, amount: i128})
       const args = [
-        Address.fromString(from).toScVal(),
-        Address.fromString(to).toScVal(),
-        nativeToScVal(transferAmount, { type: 'i128' })
+        Address.fromString(from).toScVal(),    // from parameter
+        Address.fromString(to).toScVal(),      // to parameter  
+        nativeToScVal(transferAmount, { type: 'i128' })  // amount parameter
       ];
 
       // Submit transfer transaction

@@ -37,25 +37,12 @@ export default function Dashboard() {
   useEffect(() => {
     fetchContractData();
   }, [fetchContractData]);
-
   // Fetch user data when wallet connects
   useEffect(() => {
     if (isConnected && address) {
-      console.log('🔍 Fetching user data for address:', address);
       fetchUserData(address);
     }
   }, [isConnected, address, fetchUserData]);
-
-  // Debug: Log current state
-  useEffect(() => {
-    console.log('📊 Dashboard State:', {
-      isConnected,
-      address,
-      userBalance,
-      assetMetadata,
-      isWhitelisted
-    });
-  }, [isConnected, address, userBalance, assetMetadata, isWhitelisted]);
 
   // Show loading state while wallet is being restored
   if (isRestoring || !isInitialized) {
@@ -217,10 +204,9 @@ export default function Dashboard() {
                 </div>
                 <p className="text-xs text-muted-foreground">
                   Balance: {userBalance || '0'} (raw)
-                </p>
-                <p className="text-xs text-muted-foreground">
+                </p>                <p className="text-xs text-muted-foreground">
                   ≈ {formatCurrency(
-                    (parseFloat(userBalance ? formatTokenAmount(userBalance) : '0') * 300).toString()
+                    userBalance ? formatTokenAmount(userBalance) : '0'
                   )}
                 </p>
               </CardContent>
